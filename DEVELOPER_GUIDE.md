@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
-The node version "^12.20.0 || >=14" is required.
+The node version ">=14" is required.
 
 ### SOP for installing and running reporting-cli
 
