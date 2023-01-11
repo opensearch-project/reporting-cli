@@ -52,7 +52,6 @@ jobs:
 
       - name: Run integration tests
         run: |
-          cd ./reporting-cli/
           yarn
           yarn test
           cd ..
