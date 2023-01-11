@@ -145,7 +145,6 @@ export async function downloadReport(url, format, width, height, filename, authT
       await page.click('button[id="downloadReport"]');
       await new Promise(resolve => setTimeout(resolve, 1000));
       const is_enabled = await page.evaluate(() => document.querySelector('#generateCSV[disabled]') == null);
-
       // Check if generateCSV button is enabled.
       if (is_enabled) {
         let catcher = page.waitForResponse(r => r.request().url().includes('/api/reporting/generateReport'));
@@ -244,18 +243,18 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
     exit(1);
   }
 
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(5000);
   await page.click('button[data-test-subj="confirm"]');
   await page.waitForTimeout(25000);
   await overridePage.goto(url, { waitUntil: 'networkidle0' });
   await overridePage.waitForTimeout(5000);
-
   // Check if tenant was selected successfully.
   if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
     spinner.fail('Invalid tenant');
     exit(1);
   }
   await page.goto(url, { waitUntil: 'networkidle0' });
+  await page.reload({ waitUntil: 'networkidle0' });
 };
 
 const samlAuthentication = async (page, url, username, password, tenant) => {
@@ -286,6 +285,7 @@ const samlAuthentication = async (page, url, username, password, tenant) => {
   await page.click('button[data-test-subj="confirm"]');
   await page.waitForTimeout(25000);
   await page.click(`a[href='${refUrl}']`);
+  await page.reload({ waitUntil: 'networkidle0' });
 }
 
 const cognitoAuthentication = async (page, overridePage, url, username, password, tenant) => {
@@ -320,6 +320,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
     exit(1);
   }
   await page.goto(url, { waitUntil: 'networkidle0' });
+  await page.reload({ waitUntil: 'networkidle0' });
 }
 
 const readStreamToFile = async (

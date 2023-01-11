@@ -1,0 +1,63 @@
+name: Reporting CLI tests workflow
+
+on: [pull_request, push]
+
+jobs:
+  run-tests:
+    name: Run reporting cli tests 
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        java: [11]
+        node-version: [14.x]
+        opensearch-version: [ latest ]
+    
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Reporting CLI
+        uses: actions/checkout@v2
+
+      - name: Configure sysctl limits
+        run: |
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+
+      - name: Download and run Opensearch and Dashboard
+        run: |
+          wget https://opensearch.org/samples/docker-compose.yml
+          docker-compose up --detach
+      
+      - name: Check Docker containers
+        run: docker ps -a
+
+      - name: Sleep for 200s seconds
+        run: sleep 200s
+        shell: bash
+
+      - name: Wait for cluster to start
+        uses: nick-fields/retry@v2
+        with:
+          timeout_seconds: 1
+          max_attempts: 30
+          command: curl https://localhost:9200 -ku 'admin:admin'
+          retry_wait_seconds: 30
+
+      - name: Add sample data
+        run: |
+          curl -XPOST -u 'admin:admin' 'http://localhost:5601/api/sample_data/ecommerce' -H 'osd-xsrf:true'
+          curl -XPOST -u 'admin:admin' 'http://localhost:5601/api/sample_data/logs' -H 'osd-xsrf:true'  -H 'securitytenant: global'
+          curl -XPOST -u 'admin:admin' 'http://localhost:5601/api/sample_data/flights' -H 'osd-xsrf:true'  -H 'securitytenant: admin_tenant'
+
+      - name: Run integration tests
+        run: |
+          cd ./reporting-cli/
+          yarn
+          yarn test
+          cd ..
+      
+      - name: Clean up container
+        if: always()
+        run: |
+          docker-compose down
