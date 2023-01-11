@@ -42,8 +42,6 @@ For runninng tests locally, setup opensearch and add sample data for tests execu
 
 Setup on linux:
 ```
-sudo swapoff -a
-sudo sysctl -w vm.swappiness=1
 sudo sysctl -w fs.file-max=262144
 sudo sysctl -w vm.max_map_count=262144
 wget https://opensearch.org/samples/docker-compose.yml
