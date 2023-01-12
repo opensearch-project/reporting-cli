@@ -116,11 +116,16 @@ function getOptions(options) {
 
     // If auth type is not none & credentials are missing, exit with error.
     commandOptions.auth = options.auth;
-    if ((commandOptions.auth !== undefined && commandOptions.auth !== 'none') &&
+    if ((commandOptions.auth !== undefined && commandOptions.auth !== DEFAULT_AUTH) &&
         ((commandOptions.username == undefined || commandOptions.username.length <= 0) ||
             (commandOptions.password == undefined || commandOptions.password.length <= 0))) {
         spinner.fail('Please specify a valid username or password');
         exit(1);
+    }
+
+    // If auth type is none and credentials are present, give warning auth type might be missing.
+    if (commandOptions.auth === DEFAULT_AUTH && commandOptions.username !== undefined && commandOptions.password !== undefined) {
+        spinner.warn('Credentials are present but auth type is missing. Trying to reach url with no authentication.');
     }
 
     // Set tenant
