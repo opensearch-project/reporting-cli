@@ -65,6 +65,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
+          name: opensearch-reporting-cli-${{ env.CLI_VERSION }}-linux
           path: ./opensearch-reporting-cli-${{ env.CLI_VERSION }}.tgz
       
       - name: Clean up container
