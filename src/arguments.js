@@ -89,7 +89,7 @@ function getOptions(options) {
     }
 
     // Set url.
-    commandOptions.url = options.url || process.env.OPENSEARCH_URL;
+    commandOptions.url = options.url || process.env[ENV_VAR.URL];
     if (commandOptions.url === undefined || commandOptions.url.length <= 0) {
         spinner.fail('Please specify URL');
         exit(1);
@@ -108,10 +108,10 @@ function getOptions(options) {
 
     // Get credentials from .env file
     if (commandOptions.username === null || commandOptions.username.length <= 0) {
-        commandOptions.username = process.env.OPENSEARCH_USERNAME;
+        commandOptions.username = process.env[ENV_VAR.USERNAME];
     }
     if (commandOptions.password === null || commandOptions.password.length <= 0) {
-        commandOptions.password = process.env.OPENSEARCH_PASSWORD;
+        commandOptions.password = process.env[ENV_VAR.PASSWORD];
     }
 
     // If auth type is not none & credentials are missing, exit with error.
@@ -135,28 +135,28 @@ function getOptions(options) {
     commandOptions.format = options.format;
 
     // Set default filename is not specified.
-    commandOptions.filename = options.filename || process.env.OPENSEARCH_FILENAME;
+    commandOptions.filename = options.filename || process.env[ENV_VAR.FILENAME];
 
     // Set width and height of the window
     commandOptions.width = Number(options.width);
     commandOptions.height = Number(options.height);
 
     // Set transport for the email.
-    commandOptions.transport = options.transport || process.env.OPENSEARCH_TRANSPORT;
+    commandOptions.transport = options.transport || process.env[ENV_VAR.TRANSPORT];
 
     // Set email addresse if specified.
-    commandOptions.sender = options.from || process.env.OPENSEARCH_FROM;
-    commandOptions.recipient = options.to || process.env.OPENSEARCH_TO;
+    commandOptions.sender = options.from || process.env[ENV_VAR.FROM];
+    commandOptions.recipient = options.to || process.env[ENV_VAR.TO];
 
     // Set SMTP options.
-    commandOptions.smtphost = options.smtphost || process.env.OPENSEARCH_SMTP_HOST;
-    commandOptions.smtpport = options.smtpport || process.env.OPENSEARCH_SMTP_PORT;
-    commandOptions.smtpsecure = options.smtpsecure || process.env.OPENSEARCH_SMTP_SECURE;
-    commandOptions.smtpusername = options.smtpusername || process.env.OPENSEARCH_SMTP_USERNAME;
-    commandOptions.smtppassword = options.smtppassword || process.env.OPENSEARCH_SMTP_PASSWORD;
+    commandOptions.smtphost = options.smtphost || process.env[ENV_VAR.SMTP_HOST];
+    commandOptions.smtpport = options.smtpport || process.env[ENV_VAR.SMTP_PORT];
+    commandOptions.smtpsecure = options.smtpsecure || process.env[ENV_VAR.SMTP_SECURE];
+    commandOptions.smtpusername = options.smtpusername || process.env[ENV_VAR.USERNAME];
+    commandOptions.smtppassword = options.smtppassword || process.env[ENV_VAR.PASSWORD];
 
     // Set email subject.
-    commandOptions.subject = options.subject || process.env.OPENSEARCH_EMAIL_SUBJECT;
+    commandOptions.subject = options.subject || process.env[ENV_VAR.EMAIL_SUBJECT];
 
     spinner.succeed('Fetched argument values')
     return commandOptions;

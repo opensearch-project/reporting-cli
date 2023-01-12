@@ -331,16 +331,15 @@ const readStreamToFile = async (
   if (fs.existsSync(fileName)) {
     spinner.fail('File with same name already exists.');
     exit(1);
+  }
+  if (format === FORMAT.PDF || format === FORMAT.PNG) {
+    let base64Image = stream.split(';base64,').pop();
+    fs.writeFile(fileName, base64Image, { encoding: 'base64' }, function (err) {
+      if (err) throw err;
+    })
   } else {
-    if (format === FORMAT.PDF || format === FORMAT.PNG) {
-      let base64Image = stream.split(';base64,').pop();
-      fs.writeFile(fileName, base64Image, { encoding: 'base64' }, function (err) {
-        if (err) throw err;
-      })
-    } else {
-      fs.writeFile(fileName, stream, function (err) {
-        if (err) throw err;
-      })
-    }
+    fs.writeFile(fileName, stream, function (err) {
+      if (err) throw err;
+    })
   }
 };
