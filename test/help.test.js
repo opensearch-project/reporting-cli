@@ -21,7 +21,7 @@ Options:
   -f, --format <type>                    file format for the report (choices: "pdf", "png", "csv", default: "pdf")
   -w, --width <psize>                    window width in pixels for the report (default: "1680")
   -l, --height <size>                    minimum window height in pixels for the report (default: "600")
-  -n, --filename <name>                  file name of the report (default: "opensearch_report", env: OPENSEARCH_FILENAME)
+  -n, --filename <name>                  file name of the report (default: "opensearch-report", env: OPENSEARCH_FILENAME)
   -e, --transport <method>               transport for sending the email (choices: "ses", "smtp", env: OPENSEARCH_TRANSPORT)
   -s, --from <sender>                    email address of the sender (env: OPENSEARCH_FROM)
   -r, --to <recipient>                   email address of the recipient (env: OPENSEARCH_TO)
