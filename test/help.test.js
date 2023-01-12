@@ -9,28 +9,28 @@ describe('help option', () => {
 
     test('help', async () => {
         const expectedHelpInformation =
-            `Usage: reporting [options]
+            `Usage: opensearch-reporting-cli [options]
 
 Reporting CLI to download and email reports
 
 Options:
-  -u, --url <url>                        url of report (env: URL)
-  -a, --auth <type>                      authentication type of the report (choices: "basic", "cognito", "saml", default: "none")
-  -c, --credentials <username:password>  login credentials (env: USERNAME and PASSWORD)
-  -t, --tenant <tenant>                  Tenants in OpenSearch dashboards (default: "private")
-  -f, --format <type>                    file format of the report (choices: "pdf", "png", "csv", default: "pdf")
-  -w, --width <psize>                    window width of the report (default: "1680")
-  -l, --height <size>                    window height of the report (default: "600")
-  -n, --filename <name>                  file name of the report (default: "reporting", env: FILENAME)
-  -e, --transport <method>               transport for sending the email (choices: "ses", "smtp", env: TRANSPORT)
-  -s, --from <sender>                    email address of the sender (env: FROM)
-  -r, --to <recipient>                   email address of the recipient (env: TO)
-  --smtphost <host>                      the hostname of the SMTP server (env: SMTP_HOST)
-  --smtpport <port>                      the port for connection (env: SMTP_PORT)
-  --smtpsecure <flag>                    use TLS when connecting to server (env: SMTP_SECURE)
-  --smtpusername <username>              SMTP username (env: SMTP_USERNAME)
-  --smtppassword <password>              SMTP password (env: SMTP_PASSWORD)
-  --subject <subject>                    Email Subject (default: "This is an email containing your dashboard report", env: SUBJECT)
+  -u, --url <url>                        url for the report (env: OPENSEARCH_URL)
+  -a, --auth <type>                      authentication type for the report. (choices: "basic", "cognito", "saml", default: "none")
+  -c, --credentials <username:password>  login credentials (env: OPENSEARCH_USERNAME and OPENSEARCH_PASSWORD)
+  -t, --tenant <tenant>                  tenants in opensearch dashboards (default: "private")
+  -f, --format <type>                    file format for the report (choices: "pdf", "png", "csv", default: "pdf")
+  -w, --width <psize>                    window width in pixels for the report (default: "1680")
+  -l, --height <size>                    minimum window height in pixels for the report (default: "600")
+  -n, --filename <name>                  file name of the report (default: "opensearch_report", env: OPENSEARCH_FILENAME)
+  -e, --transport <method>               transport for sending the email (choices: "ses", "smtp", env: OPENSEARCH_TRANSPORT)
+  -s, --from <sender>                    email address of the sender (env: OPENSEARCH_FROM)
+  -r, --to <recipient>                   email address of the recipient (env: OPENSEARCH_TO)
+  --smtphost <host>                      hostname of the smtp server (env: OPENSEARCH_SMTP_HOST)
+  --smtpport <port>                      port for connection (env: OPENSEARCH_SMTP_PORT)
+  --smtpsecure <flag>                    use TLS when connecting to server (env: OPENSEARCH_SMTP_SECURE)
+  --smtpusername <username>              smtp username (env: OPENSEARCH_SMTP_USERNAME)
+  --smtppassword <password>              smtp password (env: OPENSEARCH_SMTP_PASSWORD)
+  --subject <subject>                    email Subject (default: "This is an email containing your opensearch dashboard report", env: OPENSEARCH_EMAIL_SUBJECT)
   -h, --help                             display help for command
 `;
         let result = await cli(['-h'], '.');

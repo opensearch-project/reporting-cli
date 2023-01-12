@@ -5,7 +5,7 @@
 
 import puppeteer from 'puppeteer';
 import fs from 'fs';
-import { FORMAT, REPORT_TYPE, SELECTOR, AUTH, URL_SOURCE } from './constants.js';
+import { FORMAT, REPORT_TYPE, SELECTOR, AUTH, URL_SOURCE, DEFAULT_FILENAME } from './constants.js';
 import { exit } from "process";
 import ora from 'ora';
 
@@ -41,13 +41,13 @@ export async function downloadReport(url, format, width, height, filename, authT
 
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
-      if (authType === AUTH.BASIC_AUTH) {
+      if (authType === AUTH.BASIC) {
         await basicAuthentication(page, overridePage, url, username, password, tenant);
       }
-      else if (authType === AUTH.SAML_AUTH) {
+      else if (authType === AUTH.SAML) {
         await samlAuthentication(page, url, username, password, tenant);
       }
-      else if (authType === AUTH.COGNITO_AUTH) {
+      else if (authType === AUTH.COGNITO) {
         await cognitoAuthentication(page, overridePage, url, username, password, tenant);
       }
       spinner.info('Credentials are verified');
@@ -160,9 +160,9 @@ export async function downloadReport(url, format, width, height, filename, authT
 
     await browser.close();
 
-    const fileName = `${filename}.${format}`;
     const curTime = new Date();
     const timeCreated = curTime.valueOf();
+    const fileName = filename === DEFAULT_FILENAME ? `${filename}_${curTime.toISOString()}.${format}` : `${filename}.${format}`;
     const data = { timeCreated, dataUrl: buffer.toString('base64'), fileName };
 
     await readStreamToFile(data.dataUrl, fileName, format);
@@ -328,15 +328,19 @@ const readStreamToFile = async (
   fileName,
   format
 ) => {
-  if (format === FORMAT.PDF || format === FORMAT.PNG) {
-    let base64Image = stream.split(';base64,').pop();
-    fs.writeFile(fileName, base64Image, { encoding: 'base64' }, function (err) {
-      if (err) throw err;
-    })
+  if (fs.existsSync(fileName)) {
+    spinner.fail('File with same name already exists.');
+    exit(1);
   } else {
-    fs.writeFile(fileName, stream, function (err) {
-      if (err) throw err;
-    })
+    if (format === FORMAT.PDF || format === FORMAT.PNG) {
+      let base64Image = stream.split(';base64,').pop();
+      fs.writeFile(fileName, base64Image, { encoding: 'base64' }, function (err) {
+        if (err) throw err;
+      })
+    } else {
+      fs.writeFile(fileName, stream, function (err) {
+        if (err) throw err;
+      })
+    }
   }
-
 };
