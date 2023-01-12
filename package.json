@@ -3,7 +3,7 @@
   "description": "download and email OpenSearch Dashboards reports",
   "main": "index.js",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "scripts": {
     "test": "jest"
   },
