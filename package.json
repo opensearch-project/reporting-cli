@@ -1,8 +1,9 @@
 {
-  "name": "reporting-cli",
-  "description": "Download reports from anywhere",
+  "name": "opensearch-reporting-cli",
+  "description": "Opensearch Reporting CLI can be used to download and email reports",
   "main": "index.js",
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
     "test": "jest"
   },

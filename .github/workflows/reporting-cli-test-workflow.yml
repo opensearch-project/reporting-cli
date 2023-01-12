@@ -2,6 +2,9 @@ name: Reporting CLI tests workflow
 
 on: [pull_request, push]
 
+env:
+  CLI_VERSION: 0.0.1
+
 jobs:
   run-tests:
     name: Run reporting cli tests 
@@ -54,7 +57,15 @@ jobs:
         run: |
           yarn
           yarn test
-          cd ..
+
+      - name: Create a tarball from a package
+        run: |
+          npm pack
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          path: ./opensearch-reporting-cli-${{ env.CLI_VERSION }}.tgz
       
       - name: Clean up container
         if: always()

@@ -9,7 +9,7 @@ export const DEFAULT_TENANT = 'private';
 export const DEFAULT_FORMAT = 'pdf';
 export const DEFAULT_WIDTH = '1680';
 export const DEFAULT_MIN_HEIGHT = '600';
-export const DEFAULT_FILENAME = 'opensearch_report';
+export const DEFAULT_FILENAME = 'opensearch-report';
 export const DEFAULT_EMAIL_SUBJECT = 'This is an email containing your opensearch dashboard report';
 
 export const REPORT_TYPE = {
