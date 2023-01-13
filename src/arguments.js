@@ -7,6 +7,7 @@
 import { program, Option } from 'commander';
 import { exit } from 'process';
 import ora from 'ora';
+import { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT } from './constants.js';
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -15,49 +16,49 @@ const spinner = ora();
 export async function getCommandArguments() {
 
     program
-        .name('reporting')
+        .name(CLI_COMMAND_NAME)
         .description('Reporting CLI to download and email reports');
 
     program
-        .addOption(new Option('-u, --url <url>', 'url of report')
-            .env('URL'))
-        .addOption(new Option('-a, --auth <type>', 'authentication type of the report')
-            .default('none')
-            .choices(['basic', 'cognito', 'saml']))
+        .addOption(new Option('-u, --url <url>', 'url for the report')
+            .env(ENV_VAR.URL))
+        .addOption(new Option('-a, --auth <type>', 'authentication type for the report.')
+            .default(DEFAULT_AUTH)
+            .choices([AUTH.BASIC, AUTH.COGNITO, AUTH.SAML]))
         .addOption(new Option('-c, --credentials <username:password>', 'login credentials')
-            .env('USERNAME and PASSWORD'))
-        .addOption(new Option('-t, --tenant <tenant>', 'Tenants in OpenSearch dashboards')
-            .default('private'))
-        .addOption(new Option('-f, --format <type>', 'file format of the report')
-            .default('pdf')
-            .choices(['pdf', 'png', 'csv']))
-        .addOption(new Option('-w, --width <psize>', 'window width of the report')
-            .default('1680'))
-        .addOption(new Option('-l, --height <size>', 'window height of the report')
-            .default('600'))
+            .env(ENV_VAR.USERNAME + ' and ' + ENV_VAR.PASSWORD))
+        .addOption(new Option('-t, --tenant <tenant>', 'tenants in opensearch dashboards')
+            .default(DEFAULT_TENANT))
+        .addOption(new Option('-f, --format <type>', 'file format for the report')
+            .default(DEFAULT_FORMAT)
+            .choices([FORMAT.PDF, FORMAT.PNG, FORMAT.CSV]))
+        .addOption(new Option('-w, --width <psize>', 'window width in pixels for the report')
+            .default(DEFAULT_WIDTH))
+        .addOption(new Option('-l, --height <size>', 'minimum window height in pixels for the report')
+            .default(DEFAULT_MIN_HEIGHT))
         .addOption(new Option('-n, --filename <name>', 'file name of the report')
-            .default('reporting')
-            .env('FILENAME'))
+            .default(DEFAULT_FILENAME)
+            .env(ENV_VAR.FILENAME))
         .addOption(new Option('-e, --transport <method>', 'transport for sending the email')
-            .choices(['ses', 'smtp'])
-            .env('TRANSPORT'))
+            .choices([TRANSPORT_TYPE.SES, TRANSPORT_TYPE.SMTP])
+            .env(ENV_VAR.TRANSPORT))
         .addOption(new Option('-s, --from <sender>', 'email address of the sender')
-            .env('FROM'))
+            .env(ENV_VAR.FROM))
         .addOption(new Option('-r, --to <recipient>', 'email address of the recipient')
-            .env('TO'))
-        .addOption(new Option('--smtphost <host>', 'the hostname of the SMTP server')
-            .env('SMTP_HOST'))
-        .addOption(new Option('--smtpport <port>', 'the port for connection')
-            .env('SMTP_PORT'))
+            .env(ENV_VAR.TO))
+        .addOption(new Option('--smtphost <host>', 'hostname of the smtp server')
+            .env(ENV_VAR.SMTP_HOST))
+        .addOption(new Option('--smtpport <port>', 'port for connection')
+            .env(ENV_VAR.SMTP_PORT))
         .addOption(new Option('--smtpsecure <flag>', 'use TLS when connecting to server')
-            .env('SMTP_SECURE'))
-        .addOption(new Option('--smtpusername <username>', 'SMTP username')
-            .env('SMTP_USERNAME'))
-        .addOption(new Option('--smtppassword <password>', 'SMTP password')
-            .env('SMTP_PASSWORD'))
-        .addOption(new Option('--subject <subject>', 'Email Subject')
-            .default('This is an email containing your dashboard report')
-            .env('SUBJECT'))
+            .env(ENV_VAR.SMTP_SECURE))
+        .addOption(new Option('--smtpusername <username>', 'smtp username')
+            .env(ENV_VAR.SMTP_USERNAME))
+        .addOption(new Option('--smtppassword <password>', 'smtp password')
+            .env(ENV_VAR.SMTP_PASSWORD))
+        .addOption(new Option('--subject <subject>', 'email Subject')
+            .default(DEFAULT_EMAIL_SUBJECT)
+            .env(ENV_VAR.EMAIL_SUBJECT))
 
     program.parse(process.argv);
     const options = program.opts();
@@ -85,10 +86,11 @@ function getOptions(options) {
         smtpusername: null,
         smtppassword: null,
         subject: null,
+        time: null,
     }
 
     // Set url.
-    commandOptions.url = options.url || process.env.URL;
+    commandOptions.url = options.url || process.env[ENV_VAR.URL];
     if (commandOptions.url === undefined || commandOptions.url.length <= 0) {
         spinner.fail('Please specify URL');
         exit(1);
@@ -107,19 +109,24 @@ function getOptions(options) {
 
     // Get credentials from .env file
     if (commandOptions.username === null || commandOptions.username.length <= 0) {
-        commandOptions.username = process.env.USERNAME;
+        commandOptions.username = process.env[ENV_VAR.USERNAME];
     }
     if (commandOptions.password === null || commandOptions.password.length <= 0) {
-        commandOptions.password = process.env.PASSWORD;
+        commandOptions.password = process.env[ENV_VAR.PASSWORD];
     }
 
     // If auth type is not none & credentials are missing, exit with error.
     commandOptions.auth = options.auth;
-    if ((commandOptions.auth !== undefined && commandOptions.auth !== 'none') &&
+    if ((commandOptions.auth !== undefined && commandOptions.auth !== DEFAULT_AUTH) &&
         ((commandOptions.username == undefined || commandOptions.username.length <= 0) ||
             (commandOptions.password == undefined || commandOptions.password.length <= 0))) {
         spinner.fail('Please specify a valid username or password');
         exit(1);
+    }
+
+    // If auth type is none and credentials are present, give warning auth type might be missing.
+    if (commandOptions.auth === DEFAULT_AUTH && commandOptions.username !== undefined && commandOptions.password !== undefined) {
+        spinner.warn('Credentials are present but auth type is missing. Trying to reach url with no authentication.');
     }
 
     // Set tenant
@@ -127,36 +134,37 @@ function getOptions(options) {
 
     // Set report format.
     commandOptions.format = options.format;
-    if (commandOptions.format.toUpperCase() !== 'PDF' &&
-        commandOptions.format.toUpperCase() !== 'PNG' &&
-        commandOptions.format.toUpperCase() !== 'CSV') {
-        spinner.fail('Please specify a valid file format: one of PDF, PNG or CSV');
-        exit(1);
-    }
+
+    // Set time
+    commandOptions.time = new Date();
 
     // Set default filename is not specified.
-    commandOptions.filename = options.filename || process.env.FILENAME;
+    commandOptions.filename = options.filename || process.env[ENV_VAR.FILENAME];
+    commandOptions.filename = options.filename === DEFAULT_FILENAME
+        ? `${commandOptions.filename}-${commandOptions.time.toISOString()}.${commandOptions.format}`
+        : `${commandOptions.filename}.${commandOptions.format}`
+
 
     // Set width and height of the window
     commandOptions.width = Number(options.width);
     commandOptions.height = Number(options.height);
 
     // Set transport for the email.
-    commandOptions.transport = options.transport || process.env.TRANSPORT;
+    commandOptions.transport = options.transport || process.env[ENV_VAR.TRANSPORT];
 
     // Set email addresse if specified.
-    commandOptions.sender = options.from || process.env.FROM;
-    commandOptions.recipient = options.to || process.env.TO;
+    commandOptions.sender = options.from || process.env[ENV_VAR.FROM];
+    commandOptions.recipient = options.to || process.env[ENV_VAR.TO];
 
     // Set SMTP options.
-    commandOptions.smtphost = options.smtphost || process.env.SMTP_HOST;
-    commandOptions.smtpport = options.smtpport || process.env.SMTP_PORT;
-    commandOptions.smtpsecure = options.smtpsecure || process.env.SMTP_SECURE;
-    commandOptions.smtpusername = options.smtpusername || process.env.SMTP_USERNAME;
-    commandOptions.smtppassword = options.smtppassword || process.env.SMTP_PASSWORD;
+    commandOptions.smtphost = options.smtphost || process.env[ENV_VAR.SMTP_HOST];
+    commandOptions.smtpport = options.smtpport || process.env[ENV_VAR.SMTP_PORT];
+    commandOptions.smtpsecure = options.smtpsecure || process.env[ENV_VAR.SMTP_SECURE];
+    commandOptions.smtpusername = options.smtpusername || process.env[ENV_VAR.USERNAME];
+    commandOptions.smtppassword = options.smtppassword || process.env[ENV_VAR.PASSWORD];
 
     // Set email subject.
-    commandOptions.subject = options.subject || process.env.SUBJECT;
+    commandOptions.subject = options.subject || process.env[ENV_VAR.EMAIL_SUBJECT];
 
     spinner.succeed('Fetched argument values')
     return commandOptions;

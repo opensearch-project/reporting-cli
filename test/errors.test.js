@@ -47,8 +47,8 @@ describe('download report errors', () => {
   }, 150000);
 
   test('missing transport value', async () => {
-    let result = await cli(['-u', 'https://opensearch.org/', '-s', 'sender', '-r', 'recipient'], '.');
-    const expectedFile = './reporting.pdf';
+    let result = await cli(['-u', 'https://opensearch.org/', '-n', 'testtransporterror', '-s', 'sender', '-r', 'recipient'], '.');
+    const expectedFile = './testtransporterror.pdf';
     const stats = fs.statSync(expectedFile);
     expect(stats.size >= 0).toBeTruthy();
     fs.unlinkSync(expectedFile);
@@ -56,8 +56,8 @@ describe('download report errors', () => {
   }, 150000);
 
   test('missing aws config', async () => {
-    let result = await cli(['-u', 'https://opensearch.org/', '-e', 'ses', '-r', 'recipient'], '.');
-    const expectedFile = './reporting.pdf';
+    let result = await cli(['-u', 'https://opensearch.org/', '-n', 'testawsconfigerror', '-e', 'ses', '-r', 'recipient'], '.');
+    const expectedFile = './testawsconfigerror.pdf';
     const stats = fs.statSync(expectedFile);
     expect(stats.size >= 0).toBeTruthy();
     fs.unlinkSync(expectedFile);
@@ -65,11 +65,21 @@ describe('download report errors', () => {
   }, 150000);
 
   test('missing sender/recipient', async () => {
-    let result = await cli(['-u', 'https://opensearch.org/', '-e', 'smtp', '-r', 'recipient'], '.');
-    const expectedFile = './reporting.pdf';
+    let result = await cli(['-u', 'https://opensearch.org/', '-n', 'testemailerror', '-e', 'smtp', '-r', 'recipient'], '.');
+    const expectedFile = './testemailerror.pdf';
     const stats = fs.statSync(expectedFile);
     expect(stats.size >= 0).toBeTruthy();
     fs.unlinkSync(expectedFile);
     expect(result.stderr).toContain('Sender/Recipient value is missing');
+  }, 150000);
+
+  test('file already exists', async () => {
+    let result = await cli(['-u', 'https://opensearch.org/', '-n', 'report'], '.');
+    result = await cli(['-u', 'https://opensearch.org/', '-n', 'report'], '.');
+    const expectedFile = './report.pdf';
+    const stats = fs.statSync(expectedFile);
+    expect(stats.size >= 0).toBeTruthy();
+    fs.unlinkSync(expectedFile);
+    expect(result.stderr).toContain('File with same name already exists.');
   }, 150000);
 });

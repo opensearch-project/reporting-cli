@@ -22,6 +22,7 @@ await downloadReport(
     options.username,
     options.password,
     options.tenant,
+    options.time
 );
 
 await sendEmail(

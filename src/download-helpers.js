@@ -11,7 +11,7 @@ import ora from 'ora';
 
 const spinner = ora();
 
-export async function downloadReport(url, format, width, height, filename, authType, username, password, tenant) {
+export async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time) {
   spinner.start('Connecting to url ' + url);
   try {
     const browser = await puppeteer.launch({
@@ -41,13 +41,13 @@ export async function downloadReport(url, format, width, height, filename, authT
 
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
-      if (authType === AUTH.BASIC_AUTH) {
+      if (authType === AUTH.BASIC) {
         await basicAuthentication(page, overridePage, url, username, password, tenant);
       }
-      else if (authType === AUTH.SAML_AUTH) {
+      else if (authType === AUTH.SAML) {
         await samlAuthentication(page, url, username, password, tenant);
       }
-      else if (authType === AUTH.COGNITO_AUTH) {
+      else if (authType === AUTH.COGNITO) {
         await cognitoAuthentication(page, overridePage, url, username, password, tenant);
       }
       spinner.info('Credentials are verified');
@@ -160,12 +160,10 @@ export async function downloadReport(url, format, width, height, filename, authT
 
     await browser.close();
 
-    const fileName = `${filename}.${format}`;
-    const curTime = new Date();
-    const timeCreated = curTime.valueOf();
-    const data = { timeCreated, dataUrl: buffer.toString('base64'), fileName };
+    const timeCreated = time.valueOf();
+    const data = { timeCreated, dataUrl: buffer.toString('base64'), };
 
-    await readStreamToFile(data.dataUrl, fileName, format);
+    await readStreamToFile(data.dataUrl, filename, format);
     spinner.succeed('The report is downloaded');
   } catch (e) {
     spinner.fail('Downloading report failed. ' + e);
@@ -325,18 +323,21 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
 
 const readStreamToFile = async (
   stream,
-  fileName,
+  filename,
   format
 ) => {
+  if (fs.existsSync(filename)) {
+    spinner.fail('File with same name already exists.');
+    exit(1);
+  }
   if (format === FORMAT.PDF || format === FORMAT.PNG) {
     let base64Image = stream.split(';base64,').pop();
-    fs.writeFile(fileName, base64Image, { encoding: 'base64' }, function (err) {
+    fs.writeFile(filename, base64Image, { encoding: 'base64' }, function (err) {
       if (err) throw err;
     })
   } else {
-    fs.writeFile(fileName, stream, function (err) {
+    fs.writeFile(filename, stream, function (err) {
       if (err) throw err;
     })
   }
-
 };

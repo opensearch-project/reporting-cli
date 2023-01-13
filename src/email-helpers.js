@@ -8,6 +8,10 @@ import hbs from "nodemailer-express-handlebars";
 import ora from 'ora';
 import { FORMAT } from './constants.js';
 import AWS from "aws-sdk";
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const spinner = ora();
 let ses;
 
@@ -35,16 +39,16 @@ export async function sendEmail(filename, format, sender, recipient, transport, 
     return;
   }
 
-  let mailOptions = getmailOptions(format, sender, recipient, `${filename}.${format}`, subject);
+  let mailOptions = getmailOptions(format, sender, recipient, filename, subject);
 
   let transporter = getTransporter(transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword);
 
   transporter.use("compile", hbs({
     viewEngine: {
-      partialsDir: "./views/",
+      partialsDir: path.join(__dirname, './views/'),
       defaultLayout: ""
     },
-    viewPath: "./views/",
+    viewPath: path.join(__dirname, './views/'),
     extName: ".hbs"
   }));
 
@@ -77,7 +81,7 @@ const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername,
   return transporter;
 }
 
-const getmailOptions = (format, sender, recipient, fileName, emailSubject, mailOptions = {}) => {
+const getmailOptions = (format, sender, recipient, file, emailSubject, mailOptions = {}) => {
   if (format === FORMAT.PNG) {
     mailOptions = {
       from: sender,
@@ -85,8 +89,8 @@ const getmailOptions = (format, sender, recipient, fileName, emailSubject, mailO
       to: recipient,
       attachments: [
         {
-          filename: fileName,
-          path: fileName,
+          filename: file,
+          path: file,
           cid: 'report'
         }],
       template: 'index'
@@ -98,8 +102,8 @@ const getmailOptions = (format, sender, recipient, fileName, emailSubject, mailO
       to: recipient,
       attachments: [
         {
-          filename: fileName,
-          path: fileName,
+          filename: file,
+          path: file,
           contentType: 'application/pdf'
         }],
       template: 'index'
