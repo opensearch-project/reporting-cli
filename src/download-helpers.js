@@ -5,13 +5,13 @@
 
 import puppeteer from 'puppeteer';
 import fs from 'fs';
-import { FORMAT, REPORT_TYPE, SELECTOR, AUTH, URL_SOURCE, DEFAULT_FILENAME } from './constants.js';
+import { FORMAT, REPORT_TYPE, SELECTOR, AUTH, URL_SOURCE } from './constants.js';
 import { exit } from "process";
 import ora from 'ora';
 
 const spinner = ora();
 
-export async function downloadReport(url, format, width, height, filename, authType, username, password, tenant) {
+export async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time) {
   spinner.start('Connecting to url ' + url);
   try {
     const browser = await puppeteer.launch({
@@ -160,12 +160,10 @@ export async function downloadReport(url, format, width, height, filename, authT
 
     await browser.close();
 
-    const curTime = new Date();
-    const timeCreated = curTime.valueOf();
-    const fileName = filename === DEFAULT_FILENAME ? `${filename}_${curTime.toISOString()}.${format}` : `${filename}.${format}`;
-    const data = { timeCreated, dataUrl: buffer.toString('base64'), fileName };
+    const timeCreated = time.valueOf();
+    const data = { timeCreated, dataUrl: buffer.toString('base64'), };
 
-    await readStreamToFile(data.dataUrl, fileName, format);
+    await readStreamToFile(data.dataUrl, filename, format);
     spinner.succeed('The report is downloaded');
   } catch (e) {
     spinner.fail('Downloading report failed. ' + e);
@@ -325,20 +323,20 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
 
 const readStreamToFile = async (
   stream,
-  fileName,
+  filename,
   format
 ) => {
-  if (fs.existsSync(fileName)) {
+  if (fs.existsSync(filename)) {
     spinner.fail('File with same name already exists.');
     exit(1);
   }
   if (format === FORMAT.PDF || format === FORMAT.PNG) {
     let base64Image = stream.split(';base64,').pop();
-    fs.writeFile(fileName, base64Image, { encoding: 'base64' }, function (err) {
+    fs.writeFile(filename, base64Image, { encoding: 'base64' }, function (err) {
       if (err) throw err;
     })
   } else {
-    fs.writeFile(fileName, stream, function (err) {
+    fs.writeFile(filename, stream, function (err) {
       if (err) throw err;
     })
   }

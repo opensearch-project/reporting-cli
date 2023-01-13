@@ -86,6 +86,7 @@ function getOptions(options) {
         smtpusername: null,
         smtppassword: null,
         subject: null,
+        time: null,
     }
 
     // Set url.
@@ -134,8 +135,15 @@ function getOptions(options) {
     // Set report format.
     commandOptions.format = options.format;
 
+    // Set time
+    commandOptions.time = new Date();
+
     // Set default filename is not specified.
     commandOptions.filename = options.filename || process.env[ENV_VAR.FILENAME];
+    commandOptions.filename = options.filename === DEFAULT_FILENAME
+        ? `${commandOptions.filename}-${commandOptions.time.toISOString()}.${commandOptions.format}`
+        : `${commandOptions.filename}.${commandOptions.format}`
+
 
     // Set width and height of the window
     commandOptions.width = Number(options.width);
