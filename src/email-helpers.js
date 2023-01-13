@@ -8,6 +8,10 @@ import hbs from "nodemailer-express-handlebars";
 import ora from 'ora';
 import { FORMAT } from './constants.js';
 import AWS from "aws-sdk";
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const spinner = ora();
 let ses;
 
@@ -41,10 +45,10 @@ export async function sendEmail(filename, format, sender, recipient, transport, 
 
   transporter.use("compile", hbs({
     viewEngine: {
-      partialsDir: "./views/",
+      partialsDir: path.join(__dirname, './views/'),
       defaultLayout: ""
     },
-    viewPath: "./views/",
+    viewPath: path.join(__dirname, './views/'),
     extName: ".hbs"
   }));
 
