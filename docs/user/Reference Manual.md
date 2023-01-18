@@ -1,10 +1,10 @@
-## Reporting CLI
+# OpenSearch Reporting CLI
 
-Reporting CLI is a quick out-of-box options to be able to download reports without requiring the use of Dashboards.
+Reporting CLI is a quick out-of-box options to be able to download reports without using Dashboards.
 
-### Features
+## Features
 
-- Reporting CLI supports following authentication types for opensearch connection.
+- Reporting CLI supports following authentication types for OpenSearch Dashboards connection.
     - Basic authentication
     - Cognito authentication
     - SAML authentication
@@ -15,58 +15,51 @@ Reporting CLI is a quick out-of-box options to be able to download reports witho
     - CSV
 - Reporting CLI can be used to send email with report as an attachment.   
 
-### Command-line Options
+## Command-line Options
 
 Reporting CLI supports following configurable options.
 
 Option | Default Value | Valid Options |  Environment Variable | Description
 -- | --- | --- | --- | --- |
-url | - | - | URL | url of the report
-format | pdf | pdf, png, csv | - | file formart of the report
-width | 1680 | - | - | page width in pixels
-height | 600 | - | - | page height in pixels
-filename | reporting | - | FILENAME | file name of the report
-auth | none | basic, saml, cognito, none | - | authentication type
-tenant | private | - | - | tenant in OpenSearch dashboards
-credentials | - | - | USERNAME and PASSWORD | login credentials in the format of username:password for connecting to url
-from | - | - | FROM | the email address of the sender
-to | - | - | TO | the recipient of the email
-transport | - | ses, smtp | TRANSPORT | transport for sending the email
-smtphost | - | - | SMTP_HOST | the hostname of the SMTP server
-smtpport | - | - | SMTP_PORT | the port for connection
-smtpusername | - | - | SMTP_USERNAME | SMTP username
-smtppassword | - | - | SMTP_PASSWORD | SMTP password
-smtpsecure | - | - | SMTP_SECURE | if true the connection will use TLS when connecting to server.
-subject | 'This is an email containing your dashboard report' | - | SUBJECT |Subject for the email
+-u, --url | - | - | OPENSEARCH_URL | url for the report
+-f, --format | pdf | pdf, png, csv | - | file format for the report
+-w, --width | 1680 | - | - | window width in pixels for the report
+-l, --height | 600 | - | - | minimum window height in pixels for the report
+-n, --filename | opensearch-report-timestamp | - | OPENSEARCH_FILENAME | file name of the report
+-a, --auth | none | basic, saml, cognito | - | authentication type for the report
+-t, --tenant | private | - | - | tenants in opensearch dashboards
+-c, --credentials | - | - | OPENSEARCH_USERNAME and OPENSEARCH_PASSWORD | login credentials in the format of username:password for connecting to url
+-s, --from | - | - | OPENSEARCH_FROM | email address of the sender
+-r, --to | - | - | OPENSEARCH_TO | email address of the recipient
+-e, --transport | - | ses, smtp | OPENSEARCH_TRANSPORT | transport for sending the email
+--smtphost | - | - | OPENSEARCH_SMTP_HOST | the hostname of the smtp server
+--smtpport | - | - | OPENSEARCH_SMTP_PORT | the port for connection
+--smtpusername | - | - | OPENSEARCH_SMTP_USERNAME | smtp username
+--smtppassword | - | - | OPENSEARCH_SMTP_PASSWORD | smtp password
+--smtpsecure | - | - | OPENSEARCH_SMTP_SECURE | if true the connection will use TLS when connecting to server.
+--subject | This is an email containing your dashboard report | - | OPENSEARCH_SUBJECT | subject for the email
 | - | - | - | CHROMIUM_PATH | path to chromium directory
 
 You can also find this information using help command.
 ```
-reporting --help
+opensearch-reporting-cli --help
 ```
 
-### Environment Variable File
+## Environment Variable File
 
-Reporting CLI also reads environment variables from .env file inside the project. 
-
-```md
-.
-Reporting
-├── src
-│   └── .env
-```
+Reporting CLI also reads environment variables from .env file in the current directory.
 
 - Each line should have format NAME=VALUE
 - Lines starting with # are considered as comments.
 - There is no special handling of quotation marks.
 
-NOTE: Values from the command line argument has higher priority than environment file. For example, if you add filename as *test* in *.env* file and also add `--filename report` command option, the downloded report's name will be *report*.
+NOTE: Values from the command line argument has higher priority than environment variables. For example, if you add filename as *test* in *.env* file and also add `--filename report` command option, the downloded report's name will be *report*.
 
-### Example
+## Example
 
 Sample command for downloading a dashboard report with basic authentication in png format
 ```
-reporting --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --format png --auth basic --credentials admin:admin
+opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --format png --auth basic --credentials admin:admin
 ```
 Report will be downloaded in the current directory.
 
@@ -91,30 +84,25 @@ Prerequisites:
 
 Sample command to send email with report as an attachment:
 ```
-reporting --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --transport ses --from <sender_email_id> --to <recipient_email_id>
+opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --transport ses --from <sender_email_id> --to <recipient_email_id>
 ```
 This example uses default values for all other options.
 
-You can also set *FROM*, *TO*, *TRANSPORT* in .env file and use following command. 
+You can also set *FROM*, *TO*, *TRANSPORT* as environment variables and use following command. 
 ```
-reporting --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d
+opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d
 ```
-
-To modify the body of your email, you can simply edit *index.hbs* file.
-
 
 ### Sending an Email with report attachment using SMTP
 
-For sending email using SMTP transport, the options **SMTP_HOST**, **SMTP_PORT**, **SMTP_USER**, **SMTP_PASSWORD**, **SMTP_SECURE** need to be set in .env file.
+For sending email using SMTP transport, the options **OPENSEARCH_SMTP_HOST**, **OPENSEARCH_SMTP_PORT**, **OPENSEARCH_SMTP_USERNAME**, **OPENSEARCH_SMTP_PASSWORD**, **OPENSEARCH_SMTP_SECURE** need to be set in environment variables.
 
-Once above options are set in .env file, you can send the email using below sample command.
+Once above options are set, you can send the email using below sample command.
 ```
 reporting --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --transport smtp --from <sender_email_id> --to <recipient_email_id>
 ```
 
 You can choose to set options using *.env* file or the command line argument values in any combination. Make sure to specify all required values to avoid getting errors.
-
-To modify the body of your email, you can simply edit *index.hbs* file.
 
 ## Limitations
 - Supported platforms are Windows x86, Windows x64, Mac Intel, Mac ARM, Linux x86, Linux x64.

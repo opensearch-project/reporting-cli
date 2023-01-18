@@ -1,0 +1,11 @@
+node_modules/
+.env
+opensearch-report*
+docs
+test
+.github
+.gitignore
+.npmignore
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+yarn.lock
