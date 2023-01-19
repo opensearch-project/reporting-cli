@@ -1,6 +1,35 @@
+<img src="https://opensearch.org/assets/img/opensearch-logo-themed.svg" height="64px">
+
+- [OpenSearch Reporting CLI](#opensearch-reporting-cli)
+- [Setup](#setup)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [Security](#security)
+- [License](#license)
+- [Copyright](#copyright)
+
 # OpenSearch Reporting CLI
 
-TODO
+OpenSearch Reporting CLI is a quick out-of-box options to be able to download reports without using Dashboards.
+
+## Setup
+
+To download and install the Reporting CLI from npm, run the following command.
+
+```bash
+npm i @opensearch-project/reporting-cli
+```
+
+You can also download the `opensearch-reporting-cli` tool from the [OpenSearch.org](https://opensearch.org/downloads.html) and run the following command.
+
+```bash
+npm install -g opensearch-reporting-cli-1.0.0.tgz
+```
+
+## Examples
+
+Please see the [USER_GUIDE](USER_GUIDE.md) for examples.
 
 ## Contributing
 
