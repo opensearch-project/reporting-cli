@@ -1,5 +1,5 @@
 {
-  "name": "@opensearch-project/opensearch-reporting-cli",
+  "name": "@opensearch-project/reporting-cli",
   "description": "Opensearch Reporting CLI to download and email OpenSearch Dashboards reports.",
   "main": "index.js",
   "type": "module",

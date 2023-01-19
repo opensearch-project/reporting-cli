@@ -62,6 +62,10 @@ jobs:
         run: |
           npm pack
 
+      - name: Rename artifact
+        run: |
+          mv opensearch-project-reporting-cli-1.0.0.tgz opensearch-reporting-cli-1.0.0.tgz
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:

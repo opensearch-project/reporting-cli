@@ -88,7 +88,7 @@ opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa
 ```
 This example uses default values for all other options.
 
-You can also set *FROM*, *TO*, *TRANSPORT* as environment variables and use following command. 
+You can also set *OPENSEARCH_FROM*, *OPENSEARCH_TO*, *OPENSEARCH_TRANSPORT* as environment variables and use following command.
 ```
 opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d
 ```
@@ -109,7 +109,7 @@ You can choose to set options using *.env* file or the command line argument val
   
   For any other platform, users can take advantage of *CHROMIUM_PATH* environment variable to use custom chromium.
 
-- If a URL contains `!`, history expansion needs to be disable temporarity. 
+- If a URL contains `!`, history expansion needs to be disable temporarily.
 
   bash: `set +H`
 

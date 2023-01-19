@@ -18,7 +18,7 @@ OpenSearch Reporting CLI is a quick out-of-box options to be able to download re
 To download and install the Reporting CLI from npm, run the following command.
 
 ```bash
-npm i @opensearch-project/opensearch-reporting-cli
+npm i @opensearch-project/reporting-cli
 ```
 
 You can also download the `opensearch-reporting-cli` tool from the [OpenSearch.org](https://opensearch.org/downloads.html) and run the following command.
