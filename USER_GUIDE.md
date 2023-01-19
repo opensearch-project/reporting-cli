@@ -99,7 +99,7 @@ For sending email using SMTP transport, the options **OPENSEARCH_SMTP_HOST**, **
 
 Once above options are set, you can send the email using below sample command.
 ```
-reporting --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --transport smtp --from <sender_email_id> --to <recipient_email_id>
+opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --transport smtp --from <sender_email_id> --to <recipient_email_id>
 ```
 
 You can choose to set options using *.env* file or the command line argument values in any combination. Make sure to specify all required values to avoid getting errors.
