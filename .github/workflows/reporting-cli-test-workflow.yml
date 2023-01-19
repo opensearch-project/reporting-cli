@@ -64,7 +64,7 @@ jobs:
 
       - name: Rename artifact
         run: |
-          mv opensearch-project-reporting-cli-1.0.0.tgz opensearch-reporting-cli-1.0.0.tgz
+          mv opensearch-project-reporting-cli-${{ env.CLI_VERSION }}.tgz opensearch-reporting-cli-${{ env.CLI_VERSION }}.tgz
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
