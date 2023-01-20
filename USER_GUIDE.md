@@ -45,6 +45,8 @@ You can also find this information using help command.
 opensearch-reporting-cli --help
 ```
 
+NOTE: The tenant in the url has the higher priority than tenant value provided as command option. For example, if the command is `opensearch-reporting-cli -u http://localhost:5601/goto/069af6d6f3294421ec163b07fef91e5d?security_tenant=private -t global` then tenant value *private* will be used for generating report because url contains *security_tenant=private*.
+
 ## Environment Variable File
 
 Reporting CLI also reads environment variables from .env file in the current directory.
