@@ -5,7 +5,7 @@
 
 import puppeteer from 'puppeteer';
 import fs from 'fs';
-import { FORMAT, AUTH} from './constants.js';
+import { FORMAT, REPORT_TYPE, SELECTOR, AUTH, URL_SOURCE } from './constants.js';
 import { exit } from "process";
 import ora from 'ora';
 
@@ -64,8 +64,63 @@ export async function downloadReport(url, format, width, height, filename, authT
       height: height,
     });
 
-    await waitForDynamicContent(page);
+    const reportSource = getReportSourceFromURL(url);
 
+    // if its an OpenSearch report, remove extra elements.
+    if (reportSource !== 'Other' && reportSource !== 'Saved search') {
+      await page.evaluate(
+        (reportSource, REPORT_TYPE) => {
+          // remove buttons.
+          document
+            .querySelectorAll("[class^='euiButton']")
+            .forEach((e) => e.remove());
+          // remove top navBar.
+          document
+            .querySelectorAll("[class^='euiHeader']")
+            .forEach((e) => e.remove());
+          // remove visualization editor.
+          if (reportSource === REPORT_TYPE.VISUALIZATION) {
+            document
+              .querySelector('[data-test-subj="splitPanelResizer"]')
+              ?.remove();
+            document.querySelector('.visEditor__collapsibleSidebar')?.remove();
+          }
+          document.body.style.paddingTop = '0px';
+        },
+        reportSource,
+        REPORT_TYPE
+      );
+    }
+
+    // force wait for any resize to load after the above DOM modification.
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    switch (reportSource) {
+      case REPORT_TYPE.DASHBOARD:
+        await page.waitForSelector(SELECTOR.DASHBOARD, {
+          visible: true,
+        });
+        break;
+      case REPORT_TYPE.VISUALIZATION:
+        await page.waitForSelector(SELECTOR.VISUALIZATION, {
+          visible: true,
+        });
+        break;
+      case REPORT_TYPE.NOTEBOOK:
+        await page.waitForSelector(SELECTOR.NOTEBOOK, {
+          visible: true,
+        });
+        break;
+      case REPORT_TYPE.DISCOVER:
+        await page.waitForSelector(SELECTOR.DISCOVER, {
+          visible: true,
+        });
+        break;
+      default:
+        break;
+    }
+
+    await waitForDynamicContent(page);
     let buffer;
     spinner.text = `Downloading Report...`;
 
@@ -142,6 +197,22 @@ const waitForDynamicContent = async (
     await new Promise(resolve => setTimeout(resolve, interval));
   }
 };
+
+const getReportSourceFromURL = (url) => {
+  if (url.includes(URL_SOURCE.DASHBOARDS)) {
+    return REPORT_TYPE.DASHBOARD;
+  }
+  else if (url.includes(URL_SOURCE.VISUALIZE)) {
+    return REPORT_TYPE.VISUALIZATION;
+  }
+  else if (url.includes(URL_SOURCE.DISCOVER)) {
+    return REPORT_TYPE.DISCOVER;
+  }
+  else if (url.includes(URL_SOURCE.NOTEBOOKS)) {
+    return REPORT_TYPE.NOTEBOOK;
+  }
+  return REPORT_TYPE.OTHER;
+}
 
 const getUrl = async (url) => {
   let urlExt = url.split("#");

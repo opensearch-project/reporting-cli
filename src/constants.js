@@ -12,6 +12,21 @@ export const DEFAULT_MIN_HEIGHT = '600';
 export const DEFAULT_FILENAME = 'opensearch-report';
 export const DEFAULT_EMAIL_SUBJECT = 'This is an email containing your opensearch dashboard report';
 
+export const REPORT_TYPE = {
+  DASHBOARD: 'Dashboard',
+  VISUALIZATION: 'Visualization',
+  NOTEBOOK: 'Notebook',
+  DISCOVER: 'Saved search',
+  OTHER: 'Other',
+}
+
+export const SELECTOR = {
+  DASHBOARD: '#dashboardViewport',
+  VISUALIZATION: '.visEditor__content',
+  NOTEBOOK: '.euiPageBody',
+  DISCOVER: 'button[id="downloadReport"]'
+}
+
 export const FORMAT = {
   PDF: 'pdf',
   PNG: 'png',
@@ -23,6 +38,13 @@ export const AUTH = {
   COGNITO: 'cognito',
   SAML: 'saml',
   NONE: 'none',
+}
+
+export const URL_SOURCE = {
+  DASHBOARDS: 'dashboards#',
+  VISUALIZE: "Visualize",
+  DISCOVER: "discover#",
+  NOTEBOOKS: "notebooks",
 }
 
 export const ENV_VAR = {
