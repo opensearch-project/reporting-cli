@@ -60,6 +60,9 @@ export async function getCommandArguments() {
             .default(DEFAULT_EMAIL_SUBJECT)
             .env(ENV_VAR.EMAIL_SUBJECT))
 
+    program.addHelpText('after', `
+Note: The tenant in the url has the higher priority than tenant value provided as command option.`);
+
     program.parse(process.argv);
     const options = program.opts();
     spinner.start('Fetching the arguments values');
