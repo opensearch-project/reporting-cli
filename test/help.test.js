@@ -32,6 +32,8 @@ Options:
   --smtppassword <password>              smtp password (env: OPENSEARCH_SMTP_PASSWORD)
   --subject <subject>                    email Subject (default: "This is an email containing your opensearch dashboard report", env: OPENSEARCH_EMAIL_SUBJECT)
   -h, --help                             display help for command
+
+Note: The tenant in the url has the higher priority than tenant value provided as command option.
 `;
         let result = await cli(['-h'], '.');
         expect(result.code).toBe(0);

@@ -41,9 +41,9 @@ export const AUTH = {
 }
 
 export const URL_SOURCE = {
-  DASHBOARDS: 'dashboards#',
-  VISUALIZE: "Visualize",
-  DISCOVER: "discover#",
+  DASHBOARDS: "/app/dashboards#",
+  VISUALIZE: "/app/visualize#",
+  DISCOVER: "/app/discover#",
   NOTEBOOKS: "notebooks",
 }
 

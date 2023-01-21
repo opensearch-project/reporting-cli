@@ -94,32 +94,6 @@ export async function downloadReport(url, format, width, height, filename, authT
 
     // force wait for any resize to load after the above DOM modification.
     await new Promise(resolve => setTimeout(resolve, 1000));
-
-    switch (reportSource) {
-      case REPORT_TYPE.DASHBOARD:
-        await page.waitForSelector(SELECTOR.DASHBOARD, {
-          visible: true,
-        });
-        break;
-      case REPORT_TYPE.VISUALIZATION:
-        await page.waitForSelector(SELECTOR.VISUALIZATION, {
-          visible: true,
-        });
-        break;
-      case REPORT_TYPE.NOTEBOOK:
-        await page.waitForSelector(SELECTOR.NOTEBOOK, {
-          visible: true,
-        });
-        break;
-      case REPORT_TYPE.DISCOVER:
-        await page.waitForSelector(SELECTOR.DISCOVER, {
-          visible: true,
-        });
-        break;
-      default:
-        break;
-    }
-
     await waitForDynamicContent(page);
     let buffer;
     spinner.text = `Downloading Report...`;
