@@ -22,12 +22,13 @@ await downloadReport(
     options.username,
     options.password,
     options.tenant,
-    options.time
+    options.time,
+    options.transport
 );
 
 await sendEmail(
     options.filename,
-    options.format,
+    options.url,
     options.sender,
     options.recipient,
     options.transport,
@@ -37,4 +38,5 @@ await sendEmail(
     options.smtpusername,
     options.smtppassword,
     options.subject,
+    options.note
 );

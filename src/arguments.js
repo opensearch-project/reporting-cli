@@ -7,7 +7,7 @@
 import { program, Option } from 'commander';
 import { exit } from 'process';
 import ora from 'ora';
-import { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT } from './constants.js';
+import { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE } from './constants.js';
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -56,9 +56,12 @@ export async function getCommandArguments() {
             .env(ENV_VAR.SMTP_USERNAME))
         .addOption(new Option('--smtppassword <password>', 'smtp password')
             .env(ENV_VAR.SMTP_PASSWORD))
-        .addOption(new Option('--subject <subject>', 'email Subject')
+        .addOption(new Option('--subject <subject>', 'email subject')
             .default(DEFAULT_EMAIL_SUBJECT)
             .env(ENV_VAR.EMAIL_SUBJECT))
+        .addOption(new Option('--note <subject>', 'email note')
+            .default(DEFAULT_EMAIL_NOTE)
+            .env(ENV_VAR.EMAIL_NOTE))
 
     program.addHelpText('after', `
 Note: The tenant in the url has the higher priority than tenant value provided as command option.`);
@@ -90,6 +93,7 @@ function getOptions(options) {
         smtppassword: null,
         subject: null,
         time: null,
+        note: null
     }
 
     // Set url.
@@ -145,8 +149,7 @@ function getOptions(options) {
     commandOptions.filename = options.filename || process.env[ENV_VAR.FILENAME];
     commandOptions.filename = options.filename === DEFAULT_FILENAME
         ? `${commandOptions.filename}-${commandOptions.time.toISOString()}.${commandOptions.format}`
-        : `${commandOptions.filename}.${commandOptions.format}`
-
+        : `${commandOptions.filename}.${commandOptions.format}`;
 
     // Set width and height of the window
     commandOptions.width = Number(options.width);
@@ -168,6 +171,9 @@ function getOptions(options) {
 
     // Set email subject.
     commandOptions.subject = options.subject || process.env[ENV_VAR.EMAIL_SUBJECT];
+
+    // Set email note.
+    commandOptions.note = options.note || process.env[ENV_VAR.EMAIL_NOTE];
 
     spinner.succeed('Fetched argument values')
     return commandOptions;

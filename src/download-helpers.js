@@ -11,7 +11,7 @@ import ora from 'ora';
 
 const spinner = ora();
 
-export async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time) {
+export async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time, transport) {
   spinner.start('Connecting to url ' + url);
   try {
     const browser = await puppeteer.launch({
@@ -132,12 +132,19 @@ export async function downloadReport(url, format, width, height, filename, authT
       }
     }
 
-    await browser.close();
-
     const timeCreated = time.valueOf();
     const data = { timeCreated, dataUrl: buffer.toString('base64'), };
-
     await readStreamToFile(data.dataUrl, filename, format);
+
+    if (transport !== undefined) {
+      let emailTemplateImageBuffer = await page.screenshot({
+        fullPage: true,
+      });
+      const data = { timeCreated, dataUrl: emailTemplateImageBuffer.toString('base64'), };
+      await readStreamToFile(data.dataUrl, 'email_body.png', FORMAT.PNG);
+    }
+
+    await browser.close();
     spinner.succeed('The report is downloaded');
   } catch (e) {
     spinner.fail('Downloading report failed. ' + e);
