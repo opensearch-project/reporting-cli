@@ -137,7 +137,7 @@ export async function downloadReport(url, format, width, height, filename, authT
     await readStreamToFile(data.dataUrl, filename, format);
 
     if (transport !== undefined) {
-      let emailTemplateImageBuffer = await page.screenshot({
+      const emailTemplateImageBuffer = await page.screenshot({
         fullPage: true,
       });
       const data = { timeCreated, dataUrl: emailTemplateImageBuffer.toString('base64'), };
