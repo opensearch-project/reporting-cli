@@ -27,6 +27,7 @@ export async function sendEmail(filename, url, sender, recipient, transport, smt
     spinner.start('Sending email...');
   } else {
     if (transport === undefined && sender === undefined && recipient === undefined) {
+      deleteTemporaryImage();
       return;
     } else if (transport === undefined) {
       spinner.warn('Transport value is missing');
@@ -36,6 +37,7 @@ export async function sendEmail(filename, url, sender, recipient, transport, smt
       spinner.warn('Sender/Recipient value is missing');
     }
     spinner.fail('Skipped sending email');
+    deleteTemporaryImage();
     return;
   }
 
@@ -59,7 +61,7 @@ export async function sendEmail(filename, url, sender, recipient, transport, smt
     } else {
       spinner.succeed('Email sent successfully');
     }
-    fs.unlinkSync('email_body.png');
+    deleteTemporaryImage();
   });
 }
 
@@ -105,4 +107,11 @@ const getmailOptions = (url, sender, recipient, file, emailSubject, note, mailOp
     }
   };
   return mailOptions;
+}
+
+function deleteTemporaryImage() {
+  // Delete temporary image created for email body
+  if (fs.existsSync('email_body.png')) {
+    fs.unlinkSync('email_body.png');
+  }
 }
