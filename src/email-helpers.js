@@ -96,6 +96,11 @@ const getmailOptions = (url, sender, recipient, file, emailSubject, note, mailOp
         cid: 'email_body'
       },
       {
+        filename: 'opensearch_logo_darkmode.png',
+        path: path.join(__dirname, './views/opensearch_logo_darkmode.png'),
+        cid: 'opensearch_logo_darkmode'
+      },
+      {
         filename: file,
         path: file
       }],
