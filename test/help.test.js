@@ -31,7 +31,7 @@ Options:
   --smtpusername <username>              smtp username (env: OPENSEARCH_SMTP_USERNAME)
   --smtppassword <password>              smtp password (env: OPENSEARCH_SMTP_PASSWORD)
   --subject <subject>                    email subject (default: "This is an email containing your opensearch dashboard report", env: OPENSEARCH_EMAIL_SUBJECT)
-  --note <subject>                       email note (default: "Hi,<br>Here is the latest report!", env: OPENSEARCH_EMAIL_NOTE)
+  --note <note>                          email body (string or path to text file) (default: "Hi,\\nHere is the latest report!", env: OPENSEARCH_EMAIL_NOTE)
   -h, --help                             display help for command
 
 Note: The tenant in the url has the higher priority than tenant value provided as command option.

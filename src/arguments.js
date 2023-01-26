@@ -7,6 +7,7 @@
 import { program, Option } from 'commander';
 import { exit } from 'process';
 import ora from 'ora';
+import fs from 'fs';
 import { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE } from './constants.js';
 import dotenv from "dotenv";
 dotenv.config();
@@ -59,7 +60,7 @@ export async function getCommandArguments() {
         .addOption(new Option('--subject <subject>', 'email subject')
             .default(DEFAULT_EMAIL_SUBJECT)
             .env(ENV_VAR.EMAIL_SUBJECT))
-        .addOption(new Option('--note <subject>', 'email note')
+        .addOption(new Option('--note <note>', 'email body (string or path to text file)')
             .default(DEFAULT_EMAIL_NOTE)
             .env(ENV_VAR.EMAIL_NOTE))
 
@@ -174,7 +175,23 @@ function getOptions(options) {
 
     // Set email note.
     commandOptions.note = options.note || process.env[ENV_VAR.EMAIL_NOTE];
+    if (commandOptions.note !== DEFAULT_EMAIL_NOTE && fs.existsSync(commandOptions.note)) {
+        commandOptions.note = fs.readFileSync(commandOptions.note, "utf8");
+    }
+    commandOptions.note = getHtml(commandOptions.note);
 
     spinner.succeed('Fetched argument values')
     return commandOptions;
+}
+
+// Convert text to html
+function getHtml(text) {
+    text = (text || "");
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\t/g, "    ")
+        .replace(/ /g, "&#8203;&nbsp;&#8203;")
+        .replace(/\r\n|\r|\n/g, "<br />");
 }

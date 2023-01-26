@@ -114,8 +114,8 @@ const getmailOptions = (url, sender, recipient, file, emailSubject, note, mailOp
   return mailOptions;
 }
 
+// Delete temporary image created for email body
 function deleteTemporaryImage() {
-  // Delete temporary image created for email body
   if (fs.existsSync('email_body.png')) {
     fs.unlinkSync('email_body.png');
   }
