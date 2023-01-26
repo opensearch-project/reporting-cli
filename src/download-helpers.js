@@ -93,7 +93,7 @@ export async function downloadReport(url, format, width, height, filename, authT
     }
 
     // force wait for any resize to load after the above DOM modification.
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
     await waitForDynamicContent(page);
     let buffer;
     spinner.text = `Downloading Report...`;
