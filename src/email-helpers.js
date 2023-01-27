@@ -92,7 +92,7 @@ const getmailOptions = (url, sender, recipient, file, emailSubject, note, mailOp
     attachments: [
       {
         filename: 'email_body.png',
-        path: 'email_body.png',
+        path: '/tmp/email_body.png',
         cid: 'email_body'
       },
       {
@@ -116,7 +116,7 @@ const getmailOptions = (url, sender, recipient, file, emailSubject, note, mailOp
 
 // Delete temporary image created for email body
 function deleteTemporaryImage() {
-  if (fs.existsSync('email_body.png')) {
-    fs.unlinkSync('email_body.png');
+  if (fs.existsSync('/tmp/email_body.png')) {
+    fs.unlinkSync('/tmp/email_body.png');
   }
 }

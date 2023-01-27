@@ -6,13 +6,13 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
 import { FORMAT, REPORT_TYPE, SELECTOR, AUTH, URL_SOURCE } from './constants.js';
-import { exit } from "process";
+import { exit } from 'process';
 import ora from 'ora';
 
 const spinner = ora();
 
 export async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time, transport) {
-  spinner.start('Connecting to url ' + url);
+  spinner.start('Launching browser ');
   try {
     const browser = await puppeteer.launch({
       headless: true,
@@ -20,10 +20,12 @@ export async function downloadReport(url, format, width, height, filename, authT
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-gpu',
+        '--disable-dev-shm-usage',
         '--no-zygote',
         '--font-render-hinting=none',
         '--enable-features=NetworkService',
         '--ignore-certificate-errors',
+        '--single-process'
       ],
       executablePath: process.env.CHROMIUM_PATH,
       ignoreHTTPSErrors: true,
@@ -39,6 +41,7 @@ export async function downloadReport(url, format, width, height, filename, authT
     overridePage.setDefaultNavigationTimeout(0);
     overridePage.setDefaultTimeout(300000);
 
+    spinner.info('Connecting to url ' + url);
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
       if (authType === AUTH.BASIC) {
@@ -128,7 +131,7 @@ export async function downloadReport(url, format, width, height, filename, authT
         buffer = payload.data;
       } else {
         spinner.fail('Please save search and retry');
-        process.exit(1);
+        exit(1);
       }
     }
 
@@ -141,14 +144,14 @@ export async function downloadReport(url, format, width, height, filename, authT
         fullPage: true,
       });
       const data = { timeCreated, dataUrl: emailTemplateImageBuffer.toString('base64'), };
-      await readStreamToFile(data.dataUrl, 'email_body.png', FORMAT.PNG);
+      await readStreamToFile(data.dataUrl, '/tmp/email_body.png', FORMAT.PNG);
     }
 
     await browser.close();
     spinner.succeed('The report is downloaded');
   } catch (e) {
     spinner.fail('Downloading report failed. ' + e);
-    process.exit(1);
+    exit(1);
   }
 }
 
@@ -309,7 +312,7 @@ const readStreamToFile = async (
 ) => {
   if (fs.existsSync(filename)) {
     spinner.fail('File with same name already exists.');
-    exit(1);
+    return 1 ;
   }
   if (format === FORMAT.PDF || format === FORMAT.PNG) {
     let base64Image = stream.split(';base64,').pop();
