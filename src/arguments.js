@@ -154,7 +154,7 @@ function getOptions(options) {
 
     // If auth type is none and credentials are present, give warning auth type might be missing.
     if (commandOptions.auth === DEFAULT_AUTH && commandOptions.username !== undefined && commandOptions.password !== undefined) {
-        spinner.fail('Credentials are present but auth type is missing. Trying to reach url with no authentication.');
+        spinner.warn('Credentials are present but auth type is missing. Trying to reach url with no authentication.');
     }
 
     // Set tenant

@@ -58,7 +58,7 @@ module.exports = async function sendEmail(filename, url, sender, recipient, tran
       spinner.fail('Error sending email' + err);
       exit(1);
     } else {
-      spinner.succeed('Email sent successfully' + info);
+      spinner.succeed('Email sent successfully');
     }
     deleteTemporaryImage();
   });

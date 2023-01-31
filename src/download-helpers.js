@@ -40,7 +40,6 @@ module.exports = async function downloadReport(url, format, width, height, filen
     overridePage.setDefaultNavigationTimeout(0);
     overridePage.setDefaultTimeout(300000);
 
-    spinner.info('Connecting to url ' + url);
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
       if (authType === AUTH.BASIC) {
@@ -130,7 +129,7 @@ module.exports = async function downloadReport(url, format, width, height, filen
         buffer = payload.data;
       } else {
         spinner.fail('Please save search and retry');
-        exit(1);
+        process.exit(1);
       }
     }
 
@@ -150,7 +149,7 @@ module.exports = async function downloadReport(url, format, width, height, filen
     spinner.succeed('The report is downloaded');
   } catch (e) {
     spinner.fail('Downloading report failed. ' + e);
-    exit(1);
+    process.exit(1);
   }
 }
 
