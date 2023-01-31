@@ -9,6 +9,8 @@ var fs = require('fs');
 var AWS = require('aws-sdk');
 var path = require('path');
 const { exit } = require('process');
+const ora = require('ora');
+const spinner = ora('');
 let ses;
 
 try {
@@ -20,19 +22,19 @@ try {
 
 module.exports = async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note) {
   if (transport !== undefined && (transport === 'smtp' || ses !== undefined) && sender !== undefined && recipient !== undefined) {
-    console.log('Sending email...');
+    spinner.start('Sending email...');
   } else {
     if (transport === undefined && sender === undefined && recipient === undefined) {
       deleteTemporaryImage();
       return;
     } else if (transport === undefined) {
-      console.log('Transport value is missing');
+      spinner.warn('Transport value is missing');
     } else if (transport === 'ses' && ses === undefined) {
-      console.log('aws config not found');
+      spinner.warn('aws config not found');
     } else if (sender === undefined || recipient === undefined) {
-      console.log('Sender/Recipient value is missing');
+      spinner.warn('Sender/Recipient value is missing');
     }
-    console.log('Skipped sending email');
+    spinner.fail('Skipped sending email');
     deleteTemporaryImage();
     return;
   }
@@ -53,10 +55,10 @@ module.exports = async function sendEmail(filename, url, sender, recipient, tran
   // send email
   await transporter.sendMail(mailOptions, function (err, info) {
     if (err) {
-      console.log('Error sending email' + err);
+      spinner.fail('Error sending email' + err);
       exit(1);
     } else {
-      console.log('Email sent successfully' + info);
+      spinner.succeed('Email sent successfully' + info);
     }
     deleteTemporaryImage();
   });
