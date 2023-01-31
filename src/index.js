@@ -1,42 +1,12 @@
-#!/usr/bin/env node
 /*
  * Copyright OpenSearch Contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { sendEmail } from './email-helpers.js';
-import { downloadReport } from './download-helpers.js';
-import { getCommandArguments } from './arguments.js';
+var run = require('./run.js');
 
-"use strict";
-
-let options = await getCommandArguments();
-
-await downloadReport(
-    options.url,
-    options.format,
-    options.width,
-    options.height,
-    options.filename,
-    options.auth,
-    options.username,
-    options.password,
-    options.tenant,
-    options.time,
-    options.transport
-);
-
-await sendEmail(
-    options.filename,
-    options.url,
-    options.sender,
-    options.recipient,
-    options.transport,
-    options.smtphost,
-    options.smtpport,
-    options.smtpsecure,
-    options.smtpusername,
-    options.smtppassword,
-    options.subject,
-    options.note
-);
+exports.handler = async function (event) {
+    console.log('IS_LAMBDA: '+process.env.IS_LAMBDA);
+    await run(event);
+    return;
+}

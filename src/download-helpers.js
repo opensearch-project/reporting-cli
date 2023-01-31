@@ -3,16 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import puppeteer from 'puppeteer';
-import fs from 'fs';
-import { FORMAT, REPORT_TYPE, SELECTOR, AUTH, URL_SOURCE } from './constants.js';
-import { exit } from 'process';
-import ora from 'ora';
+var puppeteer = require('puppeteer');
+var fs = require('fs');
+var { FORMAT, REPORT_TYPE, AUTH, URL_SOURCE } = require('./constants.js');
+var exit = require('process');
 
-const spinner = ora();
-
-export async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time, transport) {
-  spinner.start('Launching browser ');
+module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time, transport) {
   try {
     const browser = await puppeteer.launch({
       headless: true,
@@ -41,7 +37,7 @@ export async function downloadReport(url, format, width, height, filename, authT
     overridePage.setDefaultNavigationTimeout(0);
     overridePage.setDefaultTimeout(300000);
 
-    spinner.info('Connecting to url ' + url);
+    console.log('Connecting to url ' + url);
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
       if (authType === AUTH.BASIC) {
@@ -53,15 +49,14 @@ export async function downloadReport(url, format, width, height, filename, authT
       else if (authType === AUTH.COGNITO) {
         await cognitoAuthentication(page, overridePage, url, username, password, tenant);
       }
-      spinner.info('Credentials are verified');
+      console.log('Credentials are verified');
     }
     // no auth
     else {
       await page.goto(url, { waitUntil: 'networkidle0' });
     }
 
-    spinner.info('Connected to url ' + url);
-    spinner.start('Loading page');
+    console.log('Loading page');
     await page.setViewport({
       width: width,
       height: height,
@@ -99,7 +94,7 @@ export async function downloadReport(url, format, width, height, filename, authT
     await new Promise(resolve => setTimeout(resolve, 2000));
     await waitForDynamicContent(page);
     let buffer;
-    spinner.text = `Downloading Report...`;
+    console.log('Downloading Report');
 
     // create pdf, png or csv accordingly
     if (format === FORMAT.PDF) {
@@ -130,7 +125,7 @@ export async function downloadReport(url, format, width, height, filename, authT
         let payload = await response.json();
         buffer = payload.data;
       } else {
-        spinner.fail('Please save search and retry');
+        console.log('Please save search and retry');
         exit(1);
       }
     }
@@ -148,9 +143,9 @@ export async function downloadReport(url, format, width, height, filename, authT
     }
 
     await browser.close();
-    spinner.succeed('The report is downloaded');
+    console.log('The report is downloaded');
   } catch (e) {
-    spinner.fail('Downloading report failed. ' + e);
+    console.log('Downloading report failed. ' + e);
     exit(1);
   }
 }
@@ -221,7 +216,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
     }
   }
   catch (err) {
-    spinner.fail('Invalid username or password');
+    console.log('Invalid username or password');
     exit(1);
   }
 
@@ -232,7 +227,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
   await overridePage.waitForTimeout(5000);
   // Check if tenant was selected successfully.
   if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
-    spinner.fail('Invalid tenant');
+    console.log('Invalid tenant');
     exit(1);
   }
   await page.goto(url, { waitUntil: 'networkidle0' });
@@ -260,7 +255,7 @@ const samlAuthentication = async (page, url, username, password, tenant) => {
     }
   }
   catch (err) {
-    spinner.fail('Invalid username or password');
+    console.log('Invalid username or password');
     exit(1);
   }
   await page.waitForTimeout(2000);
@@ -287,7 +282,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
     }
   }
   catch (err) {
-    spinner.fail('Invalid username or password');
+    console.log('Invalid username or password');
     exit(1);
   }
   await page.waitForTimeout(2000);
@@ -298,7 +293,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
 
   // Check if tenant was selected successfully.
   if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
-    spinner.fail('Invalid tenant');
+    console.log('Invalid tenant');
     exit(1);
   }
   await page.goto(url, { waitUntil: 'networkidle0' });
@@ -311,8 +306,8 @@ const readStreamToFile = async (
   format
 ) => {
   if (fs.existsSync(filename)) {
-    spinner.fail('File with same name already exists.');
-    return 1 ;
+    console.log('File with same name already exists.');
+    exit(1);
   }
   if (format === FORMAT.PDF || format === FORMAT.PNG) {
     let base64Image = stream.split(';base64,').pop();

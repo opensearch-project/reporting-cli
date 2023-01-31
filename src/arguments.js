@@ -4,17 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { program, Option } from 'commander';
-import { exit } from 'process';
-import ora from 'ora';
-import fs from 'fs';
-import { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE } from './constants.js';
-import dotenv from "dotenv";
+var { program, Option } = require('commander');
+var { exit } = require('process');
+var fs = require('fs');
+var { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE } = require('./constants.js');
+var dotenv = require("dotenv");
 dotenv.config();
 
-const spinner = ora();
-
-export async function getCommandArguments() {
+async function getCommandArguments() {
 
     program
         .name(CLI_COMMAND_NAME)
@@ -69,8 +66,29 @@ Note: The tenant in the url has the higher priority than tenant value provided a
 
     program.parse(process.argv);
     const options = program.opts();
-    spinner.start('Fetching the arguments values');
+    console.log('Fetching the arguments values');
     return getOptions(options);
+}
+
+async function getEventArguments(event) {
+    if (event.auth === undefined)
+        event['auth'] = DEFAULT_AUTH;
+    if (event.tenant === undefined)
+        event['tenant'] = DEFAULT_TENANT;
+    if (event.format === undefined)
+        event['format'] = DEFAULT_FORMAT;
+    if (event.width === undefined)
+        event['width'] = DEFAULT_WIDTH;
+    if (event.height === undefined)
+        event['height'] = DEFAULT_MIN_HEIGHT;
+    if (event.filename === undefined)
+        event['filename'] = DEFAULT_FILENAME;
+    if (event.subject === undefined)
+        event['subject'] = DEFAULT_EMAIL_SUBJECT;
+    if (event.note === undefined)
+        event['note'] = DEFAULT_EMAIL_NOTE;
+
+    return getOptions(event);
 }
 
 function getOptions(options) {
@@ -100,7 +118,7 @@ function getOptions(options) {
     // Set url.
     commandOptions.url = options.url || process.env[ENV_VAR.URL];
     if (commandOptions.url === undefined || commandOptions.url.length <= 0) {
-        spinner.fail('Please specify URL');
+        console.log('Please specify URL');
         exit(1);
     }
 
@@ -128,13 +146,13 @@ function getOptions(options) {
     if ((commandOptions.auth !== undefined && commandOptions.auth !== DEFAULT_AUTH) &&
         ((commandOptions.username == undefined || commandOptions.username.length <= 0) ||
             (commandOptions.password == undefined || commandOptions.password.length <= 0))) {
-        spinner.fail('Please specify a valid username or password');
+        console.log('Please specify a valid username or password');
         exit(1);
     }
 
     // If auth type is none and credentials are present, give warning auth type might be missing.
     if (commandOptions.auth === DEFAULT_AUTH && commandOptions.username !== undefined && commandOptions.password !== undefined) {
-        spinner.warn('Credentials are present but auth type is missing. Trying to reach url with no authentication.');
+        console.log('Credentials are present but auth type is missing. Trying to reach url with no authentication.');
     }
 
     // Set tenant
@@ -180,7 +198,7 @@ function getOptions(options) {
     }
     commandOptions.note = getHtml(commandOptions.note);
 
-    spinner.succeed('Fetched argument values')
+    console.log('Fetched argument values');
     return commandOptions;
 }
 
@@ -194,4 +212,9 @@ function getHtml(text) {
         .replace(/\t/g, "    ")
         .replace(/ /g, "&#8203;&nbsp;&#8203;")
         .replace(/\r\n|\r|\n/g, "<br />");
+}
+
+module.exports = {
+    getCommandArguments,
+    getEventArguments
 }

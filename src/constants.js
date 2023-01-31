@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export const CLI_COMMAND_NAME = 'opensearch-reporting-cli'
-export const DEFAULT_AUTH = 'none';
-export const DEFAULT_TENANT = 'private';
-export const DEFAULT_FORMAT = 'pdf';
-export const DEFAULT_WIDTH = '1680';
-export const DEFAULT_MIN_HEIGHT = '600';
-export const DEFAULT_FILENAME = 'opensearch-report';
-export const DEFAULT_EMAIL_SUBJECT = 'This is an email containing your opensearch dashboard report';
-export const DEFAULT_EMAIL_NOTE = 'Hi,\nHere is the latest report!';
+const CLI_COMMAND_NAME = 'opensearch-reporting-cli'
+const DEFAULT_AUTH = 'none';
+const DEFAULT_TENANT = 'private';
+const DEFAULT_FORMAT = 'pdf';
+const DEFAULT_WIDTH = '1680';
+const DEFAULT_MIN_HEIGHT = '600';
+const DEFAULT_FILENAME = 'opensearch-report';
+const DEFAULT_EMAIL_SUBJECT = 'This is an email containing your opensearch dashboard report';
+const DEFAULT_EMAIL_NOTE = 'Hi,\nHere is the latest report!';
 
-export const REPORT_TYPE = {
+const REPORT_TYPE = {
   DASHBOARD: 'Dashboard',
   VISUALIZATION: 'Visualization',
   NOTEBOOK: 'Notebook',
@@ -21,34 +21,34 @@ export const REPORT_TYPE = {
   OTHER: 'Other',
 }
 
-export const SELECTOR = {
+const SELECTOR = {
   DASHBOARD: '#dashboardViewport',
   VISUALIZATION: '.visEditor__content',
   NOTEBOOK: '.euiPageBody',
   DISCOVER: 'button[id="downloadReport"]'
 }
 
-export const FORMAT = {
+const FORMAT = {
   PDF: 'pdf',
   PNG: 'png',
   CSV: 'csv'
 }
 
-export const AUTH = {
+const AUTH = {
   BASIC: 'basic',
   COGNITO: 'cognito',
   SAML: 'saml',
   NONE: 'none',
 }
 
-export const URL_SOURCE = {
+const URL_SOURCE = {
   DASHBOARDS: "/app/dashboards#",
   VISUALIZE: "/app/visualize#",
   DISCOVER: "/app/discover#",
   NOTEBOOKS: "notebooks",
 }
 
-export const ENV_VAR = {
+const ENV_VAR = {
   URL: 'OPENSEARCH_URL',
   USERNAME: 'OPENSEARCH_USERNAME',
   PASSWORD: 'OPENSEARCH_PASSWORD',
@@ -65,7 +65,12 @@ export const ENV_VAR = {
   EMAIL_NOTE: 'OPENSEARCH_EMAIL_NOTE',
 }
 
-export const TRANSPORT_TYPE = {
+const TRANSPORT_TYPE = {
   SES: 'ses',
   SMTP: 'smtp'
 }
+
+module.exports = {
+  CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_TENANT, DEFAULT_FORMAT, DEFAULT_WIDTH, DEFAULT_MIN_HEIGHT, DEFAULT_FILENAME, DEFAULT_EMAIL_SUBJECT, 
+  DEFAULT_EMAIL_NOTE, REPORT_TYPE, SELECTOR, FORMAT, AUTH, URL_SOURCE, ENV_VAR, TRANSPORT_TYPE
+};

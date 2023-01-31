@@ -3,16 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import nodemailer from "nodemailer";
-import hbs from "nodemailer-express-handlebars";
-import ora from 'ora';
-import fs from 'fs';
-import AWS from "aws-sdk";
-import path from 'path';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const spinner = ora();
+var nodemailer = require('nodemailer');
+var hbs = require('nodemailer-express-handlebars');
+var fs = require('fs');
+var AWS = require('aws-sdk');
+var path = require('path');
+const { exit } = require('process');
 let ses;
 
 try {
@@ -22,21 +18,21 @@ try {
   // Do not set AWS_SDK_LOAD_CONFIG if aws config file is missing.
 }
 
-export async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note) {
+module.exports = async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note) {
   if (transport !== undefined && (transport === 'smtp' || ses !== undefined) && sender !== undefined && recipient !== undefined) {
-    spinner.start('Sending email...');
+    console.log('Sending email...');
   } else {
     if (transport === undefined && sender === undefined && recipient === undefined) {
       deleteTemporaryImage();
       return;
     } else if (transport === undefined) {
-      spinner.warn('Transport value is missing');
+      console.log('Transport value is missing');
     } else if (transport === 'ses' && ses === undefined) {
-      spinner.warn('aws config not found');
+      console.log('aws config not found');
     } else if (sender === undefined || recipient === undefined) {
-      spinner.warn('Sender/Recipient value is missing');
+      console.log('Sender/Recipient value is missing');
     }
-    spinner.fail('Skipped sending email');
+    console.log('Skipped sending email');
     deleteTemporaryImage();
     return;
   }
@@ -57,9 +53,10 @@ export async function sendEmail(filename, url, sender, recipient, transport, smt
   // send email
   await transporter.sendMail(mailOptions, function (err, info) {
     if (err) {
-      spinner.fail('Error sending email' + err);
+      console.log('Error sending email' + err);
+      exit(1);
     } else {
-      spinner.succeed('Email sent successfully');
+      console.log('Email sent successfully' + info);
     }
     deleteTemporaryImage();
   });

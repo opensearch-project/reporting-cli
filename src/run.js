@@ -1,0 +1,44 @@
+/*
+ * Copyright OpenSearch Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+var sendEmail = require('./email-helpers.js');
+var downloadReport = require('./download-helpers.js');
+var { getCommandArguments, getEventArguments } = require('./arguments.js');
+
+module.exports = async function run(args) {
+    var options = args !== undefined ? await getEventArguments(args) : await getCommandArguments();
+    if (args !== undefined) {
+        options.filename = '/tmp/' + options.filename;
+    }
+
+    await downloadReport(
+        options.url,
+        options.format,
+        options.width,
+        options.height,
+        options.filename,
+        options.auth,
+        options.username,
+        options.password,
+        options.tenant,
+        options.time,
+        options.transport
+    );
+
+    await sendEmail(
+        options.filename,
+        options.url,
+        options.sender,
+        options.recipient,
+        options.transport,
+        options.smtphost,
+        options.smtpport,
+        options.smtpsecure,
+        options.smtpusername,
+        options.smtppassword,
+        options.subject,
+        options.note
+    );
+}
