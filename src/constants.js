@@ -11,6 +11,7 @@ export const DEFAULT_WIDTH = '1680';
 export const DEFAULT_MIN_HEIGHT = '600';
 export const DEFAULT_FILENAME = 'opensearch-report';
 export const DEFAULT_EMAIL_SUBJECT = 'This is an email containing your opensearch dashboard report';
+export const DEFAULT_EMAIL_NOTE = 'Hi,\nHere is the latest report!';
 
 export const REPORT_TYPE = {
   DASHBOARD: 'Dashboard',
@@ -60,7 +61,8 @@ export const ENV_VAR = {
   SMTP_SECURE: 'OPENSEARCH_SMTP_SECURE',
   SMTP_USERNAME: 'OPENSEARCH_SMTP_USERNAME',
   SMTP_PASSWORD: 'OPENSEARCH_SMTP_PASSWORD',
-  EMAIL_SUBJECT: 'OPENSEARCH_EMAIL_SUBJECT'
+  EMAIL_SUBJECT: 'OPENSEARCH_EMAIL_SUBJECT',
+  EMAIL_NOTE: 'OPENSEARCH_EMAIL_NOTE',
 }
 
 export const TRANSPORT_TYPE = {

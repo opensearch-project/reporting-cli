@@ -6,7 +6,7 @@
 import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import ora from 'ora';
-import { FORMAT } from './constants.js';
+import fs from 'fs';
 import AWS from "aws-sdk";
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -22,11 +22,12 @@ try {
   // Do not set AWS_SDK_LOAD_CONFIG if aws config file is missing.
 }
 
-export async function sendEmail(filename, format, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject) {
+export async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note) {
   if (transport !== undefined && (transport === 'smtp' || ses !== undefined) && sender !== undefined && recipient !== undefined) {
     spinner.start('Sending email...');
   } else {
     if (transport === undefined && sender === undefined && recipient === undefined) {
+      deleteTemporaryImage();
       return;
     } else if (transport === undefined) {
       spinner.warn('Transport value is missing');
@@ -36,10 +37,11 @@ export async function sendEmail(filename, format, sender, recipient, transport, 
       spinner.warn('Sender/Recipient value is missing');
     }
     spinner.fail('Skipped sending email');
+    deleteTemporaryImage();
     return;
   }
 
-  let mailOptions = getmailOptions(format, sender, recipient, filename, subject);
+  let mailOptions = getmailOptions(url, sender, recipient, filename, subject, note);
 
   let transporter = getTransporter(transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword);
 
@@ -59,6 +61,7 @@ export async function sendEmail(filename, format, sender, recipient, transport, 
     } else {
       spinner.succeed('Email sent successfully');
     }
+    deleteTemporaryImage();
   });
 }
 
@@ -81,33 +84,39 @@ const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername,
   return transporter;
 }
 
-const getmailOptions = (format, sender, recipient, file, emailSubject, mailOptions = {}) => {
-  if (format === FORMAT.PNG) {
-    mailOptions = {
-      from: sender,
-      subject: emailSubject,
-      to: recipient,
-      attachments: [
-        {
-          filename: file,
-          path: file,
-          cid: 'report'
-        }],
-      template: 'index'
-    };
-  } else {
-    mailOptions = {
-      from: sender,
-      subject: emailSubject,
-      to: recipient,
-      attachments: [
-        {
-          filename: file,
-          path: file,
-          contentType: 'application/pdf'
-        }],
-      template: 'index'
-    };
-  }
+const getmailOptions = (url, sender, recipient, file, emailSubject, note, mailOptions = {}) => {
+  mailOptions = {
+    from: sender,
+    subject: emailSubject,
+    to: recipient,
+    attachments: [
+      {
+        filename: 'email_body.png',
+        path: 'email_body.png',
+        cid: 'email_body'
+      },
+      {
+        filename: 'opensearch_logo_darkmode.png',
+        path: path.join(__dirname, './views/opensearch_logo_darkmode.png'),
+        cid: 'opensearch_logo_darkmode'
+      },
+      {
+        filename: file,
+        path: file
+      }],
+    template: 'index',
+    context: {
+      REPORT_TITLE: file,
+      DASHBOARD_URL: url,
+      NOTE: note
+    }
+  };
   return mailOptions;
+}
+
+// Delete temporary image created for email body
+function deleteTemporaryImage() {
+  if (fs.existsSync('email_body.png')) {
+    fs.unlinkSync('email_body.png');
+  }
 }
