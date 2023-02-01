@@ -10,7 +10,7 @@ var exit = require('process');
 const ora = require('ora');
 const spinner = ora('');
 
-module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time, transport) {
+module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time, transport, emailbody) {
   spinner.start('Launching browser ');
   try {
     const browser = await puppeteer.launch({
@@ -142,7 +142,7 @@ module.exports = async function downloadReport(url, format, width, height, filen
         fullPage: true,
       });
       const data = { timeCreated, dataUrl: emailTemplateImageBuffer.toString('base64'), };
-      await readStreamToFile(data.dataUrl, '/tmp/email_body.png', FORMAT.PNG);
+      await readStreamToFile(data.dataUrl, emailbody, FORMAT.PNG);
     }
 
     await browser.close();

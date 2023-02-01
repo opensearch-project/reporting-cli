@@ -114,7 +114,8 @@ function getOptions(options) {
         smtppassword: null,
         subject: null,
         time: null,
-        note: null
+        note: null,
+        emailbody: null
     }
 
     // Set url.
@@ -171,6 +172,9 @@ function getOptions(options) {
     commandOptions.filename = options.filename === DEFAULT_FILENAME
         ? `${commandOptions.filename}-${commandOptions.time.toISOString()}.${commandOptions.format}`
         : `${commandOptions.filename}.${commandOptions.format}`;
+
+    // Set name for email body report image
+    commandOptions.emailbody = `email-body-${commandOptions.time.toISOString()}.png`
 
     // Set width and height of the window
     commandOptions.width = Number(options.width);

@@ -20,12 +20,12 @@ try {
   // Do not set AWS_SDK_LOAD_CONFIG if aws config file is missing.
 }
 
-module.exports = async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note) {
+module.exports = async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note, emailbody) {
   if (transport !== undefined && (transport === 'smtp' || ses !== undefined) && sender !== undefined && recipient !== undefined) {
     spinner.start('Sending email...');
   } else {
     if (transport === undefined && sender === undefined && recipient === undefined) {
-      deleteTemporaryImage();
+      deleteTemporaryImage(emailbody);
       return;
     } else if (transport === undefined) {
       spinner.warn('Transport value is missing');
@@ -35,11 +35,11 @@ module.exports = async function sendEmail(filename, url, sender, recipient, tran
       spinner.warn('Sender/Recipient value is missing');
     }
     spinner.fail('Skipped sending email');
-    deleteTemporaryImage();
+    deleteTemporaryImage(emailbody);
     return;
   }
 
-  let mailOptions = getmailOptions(url, sender, recipient, filename, subject, note);
+  let mailOptions = getmailOptions(url, sender, recipient, filename, subject, note, emailbody);
 
   let transporter = getTransporter(transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword);
 
@@ -53,15 +53,19 @@ module.exports = async function sendEmail(filename, url, sender, recipient, tran
   }));
 
   // send email
-  await transporter.sendMail(mailOptions, function (err, info) {
-    if (err) {
-      spinner.fail('Error sending email' + err);
-      exit(1);
-    } else {
-      spinner.succeed('Email sent successfully');
-    }
-    deleteTemporaryImage();
-  });
+  return new Promise((success, fail) => {
+      transporter.sendMail(mailOptions, function (err, info) {
+        if (err) {
+          spinner.fail('Error sending email' + err);
+          fail(err);
+          exit(1);
+        } else {
+          spinner.succeed('Email sent successfully');
+          deleteTemporaryImage(emailbody);
+          success(info);
+        }
+      });
+    });
 }
 
 const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, transporter) => {
@@ -83,15 +87,15 @@ const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername,
   return transporter;
 }
 
-const getmailOptions = (url, sender, recipient, file, emailSubject, note, mailOptions = {}) => {
+const getmailOptions = (url, sender, recipient, file, emailSubject, note, emailbody, mailOptions = {}) => {
   mailOptions = {
     from: sender,
     subject: emailSubject,
     to: recipient,
     attachments: [
       {
-        filename: 'email_body.png',
-        path: '/tmp/email_body.png',
+        filename: emailbody,
+        path: emailbody,
         cid: 'email_body'
       },
       {
@@ -114,8 +118,8 @@ const getmailOptions = (url, sender, recipient, file, emailSubject, note, mailOp
 }
 
 // Delete temporary image created for email body
-function deleteTemporaryImage() {
-  if (fs.existsSync('/tmp/email_body.png')) {
-    fs.unlinkSync('/tmp/email_body.png');
+function deleteTemporaryImage(emailbody) {
+  if (fs.existsSync(emailbody)) {
+    fs.unlinkSync(emailbody);
   }
 }

@@ -11,6 +11,7 @@ module.exports = async function run(args) {
     var options = args !== undefined ? await getEventArguments(args) : await getCommandArguments();
     if (args !== undefined) {
         options.filename = '/tmp/' + options.filename;
+        options.emailbody = '/tmp/' + options.emailbody;
     }
 
     await downloadReport(
@@ -24,7 +25,8 @@ module.exports = async function run(args) {
         options.password,
         options.tenant,
         options.time,
-        options.transport
+        options.transport,
+        options.emailbody
     );
 
     await sendEmail(
@@ -39,6 +41,7 @@ module.exports = async function run(args) {
         options.smtpusername,
         options.smtppassword,
         options.subject,
-        options.note
+        options.note,
+        options.emailbody
     );
 }

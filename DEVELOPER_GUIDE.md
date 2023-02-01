@@ -31,7 +31,7 @@ The node version "^12.20.0 || >=14" is required.
 
     To uninstall, use  
     ```
-    npm uninstall -g opensearch-reporting-cli
+    npm uninstall -g @opensearch-project/reporting-cli
     ```
 
 ### Running Tests

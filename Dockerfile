@@ -19,17 +19,18 @@ RUN apt-get update && \
         libtool \
         cmake \
         python3 \
-        libkrb5-dev \
-        curl
+        libkrb5-dev
 
 # Copy function code
 RUN mkdir -p ${FUNCTION_DIR}/
 
-COPY package.json src/ ${FUNCTION_DIR}/
+COPY opensearch-reporting-cli-1.0.0.tgz ${FUNCTION_DIR}/
 RUN ls ${FUNCTION_DIR}/
 WORKDIR ${FUNCTION_DIR}
+RUN tar -xzf opensearch-reporting-cli-1.0.0.tgz
+RUN mv package/* .
+RUN ls
 RUN npm install
-
 RUN npm install aws-lambda-ric
 
 # Build Stage 2: Copy Build Stage 1 files in to Stage 2. Install chromium dependencies and chromium.
@@ -43,8 +44,7 @@ COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
 RUN ls ${FUNCTION_DIR}/
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
-# Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer
-# installs, work.
+# Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer installs, work.
 RUN apt-get update \
     && apt-get install -y wget gnupg \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
@@ -56,6 +56,5 @@ RUN apt-get update \
 
 ENTRYPOINT ["/usr/local/bin/npx", "aws-lambda-ric"]
 
-ENV IS_LAMBDA=true
 ENV HOME="/tmp"
-CMD [ "/function/index.handler" ]
+CMD [ "/function/src/index.handler" ]
