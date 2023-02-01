@@ -36,7 +36,6 @@ ARG FUNCTION_DIR
 WORKDIR ${FUNCTION_DIR}
 # Copy in the build image dependencies
 COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
-RUN ls ${FUNCTION_DIR}/
 
 # Install latest chrome dev package and fonts to support major charsets (Chinese, Japanese, Arabic, Hebrew, Thai and a few others)
 # Note: this installs the necessary libs to make the bundled version of Chromium that Puppeteer installs, work.
