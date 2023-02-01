@@ -23,13 +23,10 @@ RUN apt-get update && \
 
 # Copy function code
 COPY opensearch-reporting-cli-1.0.0.tgz ${FUNCTION_DIR}/
-RUN ls ${FUNCTION_DIR}/
 WORKDIR ${FUNCTION_DIR}
 RUN tar -xzf opensearch-reporting-cli-1.0.0.tgz
 RUN mv package/* .
-RUN ls
-RUN npm install
-RUN npm install aws-lambda-ric
+RUN npm install && npm install aws-lambda-ric
 
 # Build Stage 2: Copy Build Stage 1 files in to Stage 2. Install chromium dependencies and chromium.
 FROM node:lts-slim
