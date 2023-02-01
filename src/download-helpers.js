@@ -11,7 +11,7 @@ const ora = require('ora');
 const spinner = ora('');
 
 module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time, transport, emailbody) {
-  spinner.start('Launching browser ');
+  spinner.start('Connecting to url ' + url);
   try {
     const browser = await puppeteer.launch({
       headless: true,
