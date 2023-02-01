@@ -22,8 +22,6 @@ RUN apt-get update && \
         libkrb5-dev
 
 # Copy function code
-RUN mkdir -p ${FUNCTION_DIR}/
-
 COPY opensearch-reporting-cli-1.0.0.tgz ${FUNCTION_DIR}/
 RUN ls ${FUNCTION_DIR}/
 WORKDIR ${FUNCTION_DIR}
@@ -52,6 +50,7 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
       --no-install-recommends \
+    && apt-get remove -y google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/usr/local/bin/npx", "aws-lambda-ric"]

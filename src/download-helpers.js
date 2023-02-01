@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-var puppeteer = require('puppeteer');
-var fs = require('fs');
-var { FORMAT, REPORT_TYPE, AUTH, URL_SOURCE } = require('./constants.js');
-var exit = require('process');
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const { FORMAT, REPORT_TYPE, AUTH, URL_SOURCE } = require('./constants.js');
+const exit = require('process');
 const ora = require('ora');
 const spinner = ora('');
 

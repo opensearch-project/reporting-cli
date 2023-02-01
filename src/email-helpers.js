@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-var nodemailer = require('nodemailer');
-var hbs = require('nodemailer-express-handlebars');
-var fs = require('fs');
-var AWS = require('aws-sdk');
-var path = require('path');
+const nodemailer = require('nodemailer');
+const hbs = require('nodemailer-express-handlebars');
+const fs = require('fs');
+const AWS = require('aws-sdk');
+const path = require('path');
 const { exit } = require('process');
 const ora = require('ora');
 const spinner = ora('');

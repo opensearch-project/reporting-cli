@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-var sendEmail = require('./email-helpers.js');
-var downloadReport = require('./download-helpers.js');
-var { getCommandArguments, getEventArguments } = require('./arguments.js');
+const sendEmail = require('./email-helpers.js');
+const downloadReport = require('./download-helpers.js');
+const { getCommandArguments, getEventArguments } = require('./arguments.js');
 
 module.exports = async function run(args) {
     var options = args !== undefined ? await getEventArguments(args) : await getCommandArguments();
