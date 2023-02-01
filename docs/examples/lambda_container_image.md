@@ -1,3 +1,11 @@
+# Scheduling Reports with Lambda
+
+Opensearch reporting CLI can be used with Lambda for scheduling email reports.
+
+### Creating Lambda container image
+
+1. Create a Dockerfile. Sample Dockerfile is as below.
+```
 # Define function directory
 ARG FUNCTION_DIR="/function"
 
@@ -19,11 +27,12 @@ RUN apt-get update && \
         libtool \
         cmake \
         python3 \
-        libkrb5-dev
+        libkrb5-dev \
+        curl
 
 # Copy function code
-COPY opensearch-reporting-cli-1.0.0.tgz ${FUNCTION_DIR}/
 WORKDIR ${FUNCTION_DIR}
+RUN curl -LJO https://artifacts.opensearch.org/reporting-cli/opensearch-reporting-cli-1.0.0.tgz
 RUN tar -xzf opensearch-reporting-cli-1.0.0.tgz
 RUN mv package/* .
 RUN npm install && npm install aws-lambda-ric
@@ -53,3 +62,18 @@ ENTRYPOINT ["/usr/local/bin/npx", "aws-lambda-ric"]
 
 ENV HOME="/tmp"
 CMD [ "/function/src/index.handler" ]
+```
+2. Run the command in from the directory where Dockerfile exists.
+
+ ```
+    docker build -t opensearch-reporting-cli .
+ ```
+### Use Lambda container image
+
+1. Push the Docker image to [Amazon ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/getting-started-console.html)
+
+2. Create a Lambda Function. Select previously created container image ro deploy for you function and architecture x86_64'.
+
+3. Update Lambda timeout to 5 min and memory size to 4096.
+
+

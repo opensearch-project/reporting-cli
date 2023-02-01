@@ -49,11 +49,3 @@ curl -XPOST -u 'admin:admin' 'http://localhost:5601/api/sample_data/logs' -H 'os
 curl -XPOST -u 'admin:admin' 'http://localhost:5601/api/sample_data/flights' -H 'osd-xsrf:true'  -H 'securitytenant: admin_tenant'
 ```
 Run `yarn test` inside `reporting-cli`.
-
-### Creating Lambda container image
-
-1. Download the opensearch-reporting-cli-1.0.0.tgz file and get [Dockerfile](./Dockerfile).
-2. Run the command in from the directory where Dockerfile and opensearch-reporting-cli-1.0.0.tgz exists.
-    ```
-    docker build -t opensearch-reporting-cli .
-    ```
