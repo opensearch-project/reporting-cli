@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const cli = require('./cli.js');
+const { url, credentials, cli } = require('./cli.js');
 const fs = require('fs');
 jest.useRealTimers();
 
@@ -37,7 +37,7 @@ describe('report format option', () => {
     }, 30000);
 
     test('download csv report', async () => {
-        let result = await cli(['-u', 'http://localhost:5601/app/discover#/view/3ba638e0-b894-11e8-a6d9-e546fe2bba5f', '-a', 'basic', '-c', 'admin:admin',
+        let result = await cli(['-u', `${url}/app/discover#/view/3ba638e0-b894-11e8-a6d9-e546fe2bba5f`, '-a', 'basic', '-c', credentials,
             '-n', 'testdownloadcsv', '-f', 'csv'], '.');
         expect(result.code).toBe(0);
         const expectedFile = './testdownloadcsv.csv';

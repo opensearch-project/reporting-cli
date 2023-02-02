@@ -5,8 +5,10 @@
 
 const path = require('path');
 const exec = require('child_process').exec;
+const url = "http://localhost:5601";
+const credentials = "admin:admin"
 
-module.exports = function (args, cwd) {
+function cli(args, cwd) {
   return new Promise(resolve => {
     exec(`node ${path.resolve('./src/cli.js')} ${args.join(' ')}`,
       { cwd },
@@ -20,3 +22,5 @@ module.exports = function (args, cwd) {
       })
   })
 }
+
+module.exports = { url, credentials, cli }

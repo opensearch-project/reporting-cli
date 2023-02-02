@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const cli = require('./cli.js');
+const { url, credentials, cli } = require('./cli.js');
 const fs = require('fs');
 jest.useRealTimers();
 
@@ -34,14 +34,14 @@ describe('download report errors', () => {
   });
 
   test('invalid tenant', async () => {
-    let result = await cli(['-u', 'http://localhost:5601/app/dashboards#/view/edf84fe0-e1a0-11e7-b6d5-4dc382ef7f5b', '-a', 'basic', '-c', 'admin:admin',
+    let result = await cli(['-u', `${url}/app/dashboards#/view/edf84fe0-e1a0-11e7-b6d5-4dc382ef7f5b`, '-a', 'basic', '-c', credentials,
       '-t', 'custom'], '.');
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('Invalid tenant');
   }, 150000);
 
   test('saved search error', async () => {
-    let result = await cli(['-u', 'http://localhost:5601/app/discover#/', '-a', 'basic', '-c', 'admin:admin', '-f', 'csv'], '.');
+    let result = await cli(['-u', `${url}/app/discover#/`, '-a', 'basic', '-c', credentials, '-f', 'csv'], '.');
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('Please save search and retry');
   }, 150000);

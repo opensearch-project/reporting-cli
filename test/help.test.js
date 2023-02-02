@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const cli = require('./cli.js');
+const { cli } = require('./cli.js');
 
 describe('help option', () => {
 
