@@ -80,6 +80,6 @@ Opensearch reporting CLI can be used with Lambda for scheduling email reports.
 
 2. Create a Lambda Function. Select previously created container image and architecture x86_64'.
 
-3. Update Lambda timeout to 5 min and memory size to 4096.
+3. Update Lambda timeout to 5 min and memory size to at least 1024MB.
 
 
