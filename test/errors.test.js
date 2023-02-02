@@ -34,7 +34,7 @@ describe('download report errors', () => {
   });
 
   test('invalid tenant', async () => {
-    let result = await cli(['-u', `${url}/app/dashboards#/view/edf84fe0-e1a0-11e7-b6d5-4dc382ef7f5b`, '-a', 'basic', '-c', 'admin:admin',
+    let result = await cli(['-u', `${url}/app/dashboards#/view/edf84fe0-e1a0-11e7-b6d5-4dc382ef7f5b`, '-a', 'basic', '-c', credentials,
       '-t', 'custom'], '.');
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('Invalid tenant');
