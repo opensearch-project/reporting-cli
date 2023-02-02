@@ -8,7 +8,7 @@ const exec = require('child_process').exec;
 
 module.exports = function (args, cwd) {
   return new Promise(resolve => {
-    exec(`node ${path.resolve('./src/index.js')} ${args.join(' ')}`,
+    exec(`node ${path.resolve('./src/cli.js')} ${args.join(' ')}`,
       { cwd },
       (error, stdout, stderr) => {
         resolve({
