@@ -1,8 +1,7 @@
 {
   "name": "@opensearch-project/reporting-cli",
   "description": "Opensearch Reporting CLI to download and email OpenSearch Dashboards reports.",
-  "main": "index.js",
-  "type": "module",
+  "main": "./src/index.js",
   "homepage": "https://www.opensearch.org/",
   "version": "1.0.0",
   "keywords": [
@@ -33,11 +32,11 @@
     "lodash": "^4.17.21",
     "nodemailer": "^6.8.0",
     "nodemailer-express-handlebars": "^5.0.0",
-    "ora": "^6.1.2",
+    "ora": "^5.4.1",
     "puppeteer": "^18.2.0"
   },
   "bin": {
-    "opensearch-reporting-cli": "./src/index.js"
+    "opensearch-reporting-cli": "./src/cli.js"
   },
   "devDependencies": {
     "jest": "^29.3.1"

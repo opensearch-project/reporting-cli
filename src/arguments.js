@@ -4,17 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { program, Option } from 'commander';
-import { exit } from 'process';
-import ora from 'ora';
-import fs from 'fs';
-import { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE } from './constants.js';
-import dotenv from "dotenv";
+const { program, Option } = require('commander');
+const { exit } = require('process');
+const fs = require('fs');
+const ora = require('ora');
+const { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE } = require('./constants.js');
+const dotenv = require("dotenv");
 dotenv.config();
+const spinner = ora('');
 
-const spinner = ora();
-
-export async function getCommandArguments() {
+async function getCommandArguments() {
 
     program
         .name(CLI_COMMAND_NAME)
@@ -73,6 +72,27 @@ Note: The tenant in the url has the higher priority than tenant value provided a
     return getOptions(options);
 }
 
+async function getEventArguments(event) {
+    if (event.auth === undefined)
+        event['auth'] = DEFAULT_AUTH;
+    if (event.tenant === undefined)
+        event['tenant'] = DEFAULT_TENANT;
+    if (event.format === undefined)
+        event['format'] = DEFAULT_FORMAT;
+    if (event.width === undefined)
+        event['width'] = DEFAULT_WIDTH;
+    if (event.height === undefined)
+        event['height'] = DEFAULT_MIN_HEIGHT;
+    if (event.filename === undefined)
+        event['filename'] = DEFAULT_FILENAME;
+    if (event.subject === undefined)
+        event['subject'] = DEFAULT_EMAIL_SUBJECT;
+    if (event.note === undefined)
+        event['note'] = DEFAULT_EMAIL_NOTE;
+
+    return getOptions(event);
+}
+
 function getOptions(options) {
     var commandOptions = {
         url: null,
@@ -94,7 +114,8 @@ function getOptions(options) {
         smtppassword: null,
         subject: null,
         time: null,
-        note: null
+        note: null,
+        emailbody: null
     }
 
     // Set url.
@@ -152,6 +173,9 @@ function getOptions(options) {
         ? `${commandOptions.filename}-${commandOptions.time.toISOString().replace(/:/g, '-')}.${commandOptions.format}`
         : `${commandOptions.filename}.${commandOptions.format}`;
 
+    // Set name for email body report image
+    commandOptions.emailbody = `email-body-${commandOptions.time.toISOString().replace(/:/g, '-')}.png`
+
     // Set width and height of the window
     commandOptions.width = Number(options.width);
     commandOptions.height = Number(options.height);
@@ -180,7 +204,7 @@ function getOptions(options) {
     }
     commandOptions.note = getHtml(commandOptions.note);
 
-    spinner.succeed('Fetched argument values')
+    spinner.succeed('Fetched argument values');
     return commandOptions;
 }
 
@@ -194,4 +218,9 @@ function getHtml(text) {
         .replace(/\t/g, "    ")
         .replace(/ /g, "&#8203;&nbsp;&#8203;")
         .replace(/\r\n|\r|\n/g, "<br />");
+}
+
+module.exports = {
+    getCommandArguments,
+    getEventArguments
 }

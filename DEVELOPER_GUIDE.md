@@ -14,11 +14,11 @@ The node version "^12.20.0 || >=14" is required.
 2. Run `yarn` inside `reporting-cli/src`
 3. You can run the below commands inside `reporting-cli/src`
     ```
-    node index.js --url <url>
+    node cli.js --url <url>
     ```
     For additional command line parameter options
     ```
-    node index.js -h
+    node cli.js -h
     ```
 4. Alternatively, you can use npm install to run this command from any directory.
     ```
@@ -31,7 +31,7 @@ The node version "^12.20.0 || >=14" is required.
 
     To uninstall, use  
     ```
-    npm uninstall -g opensearch-reporting-cli
+    npm uninstall -g @opensearch-project/reporting-cli
     ```
 
 ### Running Tests
