@@ -170,7 +170,7 @@ function getOptions(options) {
     // Set default filename is not specified.
     commandOptions.filename = options.filename || process.env[ENV_VAR.FILENAME];
     commandOptions.filename = options.filename === DEFAULT_FILENAME
-        ? `${commandOptions.filename}-${commandOptions.time.toISOString()}.${commandOptions.format}`
+        ? `${commandOptions.filename}-${commandOptions.time.toISOString().replace(/:/g, '-')}.${commandOptions.format}`
         : `${commandOptions.filename}.${commandOptions.format}`;
 
     // Set name for email body report image
