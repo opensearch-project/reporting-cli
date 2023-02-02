@@ -2,9 +2,14 @@
 
 Opensearch reporting CLI can be used with Lambda for scheduling email reports.
 
+### Prerequisites
+
+- AMD64 Systems
+- Docker
+
 ### Creating Lambda container image
 
-1. Create a Dockerfile. Followig Dockerfile can be used to create a container image for v1.0.0.
+1. Create a Dockerfile. Following Dockerfile can be used to create a container image for v1.0.0.
   ```
   # Define function directory
   ARG FUNCTION_DIR="/function"
@@ -62,7 +67,7 @@ Opensearch reporting CLI can be used with Lambda for scheduling email reports.
 
   ENV HOME="/tmp"
   CMD [ "/function/src/index.handler" ]
-  ```
+  ```dockerfile
 
 2. Run the build command in from the directory where Dockerfile exists.
 
@@ -73,7 +78,7 @@ Opensearch reporting CLI can be used with Lambda for scheduling email reports.
 
 1. Push the Docker image to [Amazon ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/getting-started-console.html)
 
-2. Create a Lambda Function. Select previously created container image ro deploy for you function and architecture x86_64'.
+2. Create a Lambda Function. Select previously created container image and architecture x86_64'.
 
 3. Update Lambda timeout to 5 min and memory size to 4096.
 

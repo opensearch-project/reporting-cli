@@ -174,7 +174,7 @@ function getOptions(options) {
         : `${commandOptions.filename}.${commandOptions.format}`;
 
     // Set name for email body report image
-    commandOptions.emailbody = `email-body-${commandOptions.time.toISOString()}.png`
+    commandOptions.emailbody = `email-body-${commandOptions.time.toISOString().replace(/:/g, '-')}.png`
 
     // Set width and height of the window
     commandOptions.width = Number(options.width);

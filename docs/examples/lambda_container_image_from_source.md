@@ -64,7 +64,7 @@
     ENV HOME="/tmp"
     CMD [ "/function/index.handler" ]
 
-    ```
+    ```dockerfile
 3. Run the build command.
     ```
     docker build -t opensearch-reporting-cli .
