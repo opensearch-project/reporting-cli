@@ -6,7 +6,7 @@
     cd reporting-cli
     ```
 2. Add the following Dockerfile inside `reporting-cli`. 
-    ```
+    ```dockerfile
     # Define function directory
     ARG FUNCTION_DIR="/function"
 
@@ -64,7 +64,7 @@
     ENV HOME="/tmp"
     CMD [ "/function/index.handler" ]
 
-    ```dockerfile
+    ```
 3. Run the build command.
     ```
     docker build -t opensearch-reporting-cli .
