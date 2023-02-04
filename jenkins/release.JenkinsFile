@@ -12,7 +12,6 @@ standardReleasePipelineWithGenericTrigger(
             repository: 'https://github.com/opensearch-project/reporting-cli',
             tag: "$tag"
         )
-
         publishToArtifactsProdBucket(
             assumedRoleName: 'reporting-cli-artifacts-upload-role',
             source: 'reporting-cli',
