@@ -1,0 +1,29 @@
+name: Draft Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  draft_release:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Build and package
+        run: |
+          npm pack
+          filename=`ls opensearch-project-reporting-cli-*.tgz | sed 's/-project//g'`
+          mkdir reporting-cli && mv opensearch-project-reporting-cli-*.tgz reporting-cli/$filename
+          tar -cvf artifacts.tar.gz reporting-cli
+      - name: Draft a release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          generate_release_notes: true
+          files: |
+            artifacts.tar.gz

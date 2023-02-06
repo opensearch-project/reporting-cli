@@ -1,3 +1,4 @@
 node_modules/
 .env
 opensearch-report*
+.DS_Store
