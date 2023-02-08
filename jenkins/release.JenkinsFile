@@ -8,13 +8,13 @@ standardReleasePipelineWithGenericTrigger(
     causeString: 'A tag was cut on opensearch-project/reporting-cli repository causing this workflow to run',
     downloadReleaseAsset: true,
     publishRelease: true) {
-        publishToNpm(
-            repository: 'https://github.com/opensearch-project/reporting-cli',
-            tag: "$tag"
-        )
+        // publishToNpm(
+        //     repository: 'https://github.com/opensearch-project/reporting-cli',
+        //     tag: "$tag"
+        // )
         publishToArtifactsProdBucket(
             assumedRoleName: 'reporting-cli-artifacts-upload-role',
-            source: 'reporting-cli',
+            source: "${WORKSPACE}/reporting-cli",
             destination: 'reporting-cli',
             signingPlatform: 'linux',
             sigType: '.sig'
