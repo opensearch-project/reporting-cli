@@ -38,6 +38,7 @@ Option | Default Value | Valid Options |  Environment Variable | Description
 --smtppassword | - | - | OPENSEARCH_SMTP_PASSWORD | smtp password
 --smtpsecure | - | - | OPENSEARCH_SMTP_SECURE | if true the connection will use TLS when connecting to server.
 --subject | This is an email containing your dashboard report | - | OPENSEARCH_SUBJECT | subject for the email
+--note | Hi,\nHere is the latest report! | string or path to text file | OPENSEARCH_EMAIL_NOTE | The email body
 | - | - | - | CHROMIUM_PATH | path to chromium directory
 
 You can also find this information using help command.
