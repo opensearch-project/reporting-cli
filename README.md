@@ -49,4 +49,4 @@ See the [LICENSE](./LICENSE) file for our project's licensing. We will ask you t
 
 ## Copyright
 
-Copyright OpenSearch Contributors. See [NOTICE](NOTICE.txt) for details.
+Copyright OpenSearch Contributors. See [NOTICE](NOTICE) for details.
