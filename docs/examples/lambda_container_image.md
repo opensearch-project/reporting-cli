@@ -37,10 +37,7 @@ Opensearch reporting CLI can be used with Lambda for scheduling email reports.
 
   # Copy function code
   WORKDIR ${FUNCTION_DIR}
-  RUN curl -LJO https://artifacts.opensearch.org/reporting-cli/opensearch-reporting-cli-1.0.0.tgz
-  RUN tar -xzf opensearch-reporting-cli-1.0.0.tgz
-  RUN mv package/* .
-  RUN npm install && npm install aws-lambda-ric
+  RUN npm install @opensearch-project/reporting-cli && npm install aws-lambda-ric
 
   # Build Stage 2: Copy Build Stage 1 files in to Stage 2. Install chromium dependencies and chromium.
   FROM node:lts-slim
@@ -66,7 +63,7 @@ Opensearch reporting CLI can be used with Lambda for scheduling email reports.
   ENTRYPOINT ["/usr/local/bin/npx", "aws-lambda-ric"]
 
   ENV HOME="/tmp"
-  CMD [ "/function/src/index.handler" ]
+  CMD [ "/function/node_modules/@opensearch-project/reporting-cli/src/index.handler" ]
   ```
 
 2. Run the build command in from the directory where Dockerfile exists.
