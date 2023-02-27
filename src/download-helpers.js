@@ -219,7 +219,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
         await page.type('input[data-test-subj="comboBoxSearchInput"]', tenant);
       }
     } else {
-      if ((await page.$('[name="signInSubmitButton"]')) !== null)
+      if ((await page.$('button[type=submit]')) !== null)
         throw new Error('Invalid credentials');
     }
   }
