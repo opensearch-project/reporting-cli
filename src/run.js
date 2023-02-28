@@ -24,6 +24,7 @@ module.exports = async function run(args) {
         options.username,
         options.password,
         options.tenant,
+        options.multitenancy,
         options.time,
         options.transport,
         options.emailbody

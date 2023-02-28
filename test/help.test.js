@@ -18,6 +18,7 @@ Options:
   -a, --auth <type>                      authentication type for the report. (choices: "basic", "cognito", "saml", default: "none")
   -c, --credentials <username:password>  login credentials (env: OPENSEARCH_USERNAME and OPENSEARCH_PASSWORD)
   -t, --tenant <tenant>                  tenants in opensearch dashboards (default: "private")
+  --multitenancy <flag>                  enable or disable multi-tenancy (choices: "true", "false", default: true)
   -f, --format <type>                    file format for the report (choices: "pdf", "png", "csv", default: "pdf")
   -w, --width <psize>                    window width in pixels for the report (default: "1680")
   -l, --height <size>                    minimum window height in pixels for the report (default: "600")

@@ -8,7 +8,7 @@ const { program, Option } = require('commander');
 const { exit } = require('process');
 const fs = require('fs');
 const ora = require('ora');
-const { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE } = require('./constants.js');
+const { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE, DEFAULT_MULTI_TENANCY } = require('./constants.js');
 const dotenv = require("dotenv");
 dotenv.config();
 const spinner = ora('');
@@ -29,6 +29,9 @@ async function getCommandArguments() {
             .env(ENV_VAR.USERNAME + ' and ' + ENV_VAR.PASSWORD))
         .addOption(new Option('-t, --tenant <tenant>', 'tenants in opensearch dashboards')
             .default(DEFAULT_TENANT))
+        .addOption(new Option('--multitenancy <flag>', 'enable or disable multi-tenancy')
+                .default(DEFAULT_MULTI_TENANCY)
+                .choices(['true', 'false']))
         .addOption(new Option('-f, --format <type>', 'file format for the report')
             .default(DEFAULT_FORMAT)
             .choices([FORMAT.PDF, FORMAT.PNG, FORMAT.CSV]))
@@ -89,6 +92,8 @@ async function getEventArguments(event) {
         event['subject'] = DEFAULT_EMAIL_SUBJECT;
     if (event.note === undefined)
         event['note'] = DEFAULT_EMAIL_NOTE;
+    if (event.multitenancy === undefined)
+        event['multitenancy'] = DEFAULT_MULTI_TENANCY;
 
     return getOptions(event);
 }
@@ -100,6 +105,7 @@ function getOptions(options) {
         username: null,
         password: null,
         tenant: null,
+        multitenancy: null,
         format: null,
         width: null,
         height: null,
@@ -160,6 +166,9 @@ function getOptions(options) {
 
     // Set tenant
     commandOptions.tenant = options.tenant;
+
+    // Set multitenancy
+    commandOptions.multitenancy = options.multitenancy;
 
     // Set report format.
     commandOptions.format = options.format;

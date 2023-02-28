@@ -10,7 +10,7 @@ const exit = require('process');
 const ora = require('ora');
 const spinner = ora('');
 
-module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, time, transport, emailbody) {
+module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, multitenancy, time, transport, emailbody) {
   spinner.start('Connecting to url ' + url);
   try {
     const browser = await puppeteer.launch({
@@ -43,13 +43,13 @@ module.exports = async function downloadReport(url, format, width, height, filen
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
       if (authType === AUTH.BASIC) {
-        await basicAuthentication(page, overridePage, url, username, password, tenant);
+        await basicAuthentication(page, overridePage, url, username, password, tenant, multitenancy);
       }
       else if (authType === AUTH.SAML) {
-        await samlAuthentication(page, url, username, password, tenant);
+        await samlAuthentication(page, url, username, password, tenant, multitenancy);
       }
       else if (authType === AUTH.COGNITO) {
-        await cognitoAuthentication(page, overridePage, url, username, password, tenant);
+        await cognitoAuthentication(page, overridePage, url, username, password, tenant, multitenancy);
       }
       spinner.info('Credentials are verified');
     }
@@ -202,7 +202,7 @@ const getUrl = async (url) => {
   return urlRef;
 };
 
-const basicAuthentication = async (page, overridePage, url, username, password, tenant) => {
+const basicAuthentication = async (page, overridePage, url, username, password, tenant, multitenancy) => {
   await page.goto(url, { waitUntil: 'networkidle0' });
   await new Promise(resolve => setTimeout(resolve, 10000));
   await page.type('input[data-test-subj="user-name"]', username);
@@ -210,12 +210,17 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
   await page.click('button[type=submit]');
   await page.waitForTimeout(10000);
   try {
-    if (tenant === 'global' || tenant === 'private') {
-      await page.click('label[for=' + tenant + ']');
+    if (multitenancy === true) {
+      if (tenant === 'global' || tenant === 'private') {
+        await page.click('label[for=' + tenant + ']');
+      } else {
+        await page.click('label[for="custom"]');
+        await page.click('button[data-test-subj="comboBoxToggleListButton"]');
+        await page.type('input[data-test-subj="comboBoxSearchInput"]', tenant);
+      }
     } else {
-      await page.click('label[for="custom"]');
-      await page.click('button[data-test-subj="comboBoxToggleListButton"]');
-      await page.type('input[data-test-subj="comboBoxSearchInput"]', tenant);
+      if ((await page.$('button[type=submit]')) !== null)
+        throw new Error('Invalid credentials');
     }
   }
   catch (err) {
@@ -223,21 +228,26 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
     exit(1);
   }
 
-  await page.waitForTimeout(5000);
-  await page.click('button[data-test-subj="confirm"]');
-  await page.waitForTimeout(25000);
+  if (multitenancy === true) {
+    await page.waitForTimeout(5000);
+    await page.click('button[data-test-subj="confirm"]');
+    await page.waitForTimeout(25000);
+  }
   await overridePage.goto(url, { waitUntil: 'networkidle0' });
   await overridePage.waitForTimeout(5000);
-  // Check if tenant was selected successfully.
-  if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
-    spinner.fail('Invalid tenant');
-    exit(1);
+
+  if (multitenancy === true) {
+    // Check if tenant was selected successfully.
+    if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
+      spinner.fail('Invalid tenant');
+      exit(1);
+    }
   }
   await page.goto(url, { waitUntil: 'networkidle0' });
   await page.reload({ waitUntil: 'networkidle0' });
 };
 
-const samlAuthentication = async (page, url, username, password, tenant) => {
+const samlAuthentication = async (page, url, username, password, tenant, multitenancy) => {
   await page.goto(url, { waitUntil: 'networkidle0' });
   await new Promise(resolve => setTimeout(resolve, 10000));
   let refUrl;
@@ -249,26 +259,33 @@ const samlAuthentication = async (page, url, username, password, tenant) => {
   await page.click('[value="Sign in"]')
   await page.waitForTimeout(30000);
   try {
-    if (tenant === 'global' || tenant === 'private') {
-      await page.click('label[for=' + tenant + ']');
+    if (multitenancy === true) {
+      if (tenant === 'global' || tenant === 'private') {
+        await page.click('label[for=' + tenant + ']');
+      } else {
+        await page.click('label[for="custom"]');
+        await page.click('button[data-test-subj="comboBoxToggleListButton"]');
+        await page.type('input[data-test-subj="comboBoxSearchInput"]', tenant);
+      }
     } else {
-      await page.click('label[for="custom"]');
-      await page.click('button[data-test-subj="comboBoxToggleListButton"]');
-      await page.type('input[data-test-subj="comboBoxSearchInput"]', tenant);
+      if ((await page.$('[value="Sign in"]')) !== null)
+        throw new Error('Invalid credentials');
     }
   }
   catch (err) {
     spinner.fail('Invalid username or password');
     exit(1);
   }
-  await page.waitForTimeout(2000);
-  await page.click('button[data-test-subj="confirm"]');
-  await page.waitForTimeout(25000);
+  if (multitenancy === true) {
+    await page.waitForTimeout(2000);
+    await page.click('button[data-test-subj="confirm"]');
+    await page.waitForTimeout(25000);
+  }
   await page.click(`a[href='${refUrl}']`);
   await page.reload({ waitUntil: 'networkidle0' });
 }
 
-const cognitoAuthentication = async (page, overridePage, url, username, password, tenant) => {
+const cognitoAuthentication = async (page, overridePage, url, username, password, tenant, multitenancy) => {
   await page.goto(url, { waitUntil: 'networkidle0' });
   await new Promise(resolve => setTimeout(resolve, 10000));
   await page.type('[name="username"]', username);
@@ -276,28 +293,37 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
   await page.click('[name="signInSubmitButton"]');
   await page.waitForTimeout(30000);
   try {
-    if (tenant === 'global' || tenant === 'private') {
-      await page.click('label[for=' + tenant + ']');
+    if (multitenancy === true) {
+      if (tenant === 'global' || tenant === 'private') {
+        await page.click('label[for=' + tenant + ']');
+      } else {
+        await page.click('label[for="custom"]');
+        await page.click('button[data-test-subj="comboBoxToggleListButton"]');
+        await page.type('input[data-test-subj="comboBoxSearchInput"]', tenant);
+      }
     } else {
-      await page.click('label[for="custom"]');
-      await page.click('button[data-test-subj="comboBoxToggleListButton"]');
-      await page.type('input[data-test-subj="comboBoxSearchInput"]', tenant);
+      if ((await page.$('[name="signInSubmitButton"]')) !== null)
+        throw new Error('Invalid credentials');
     }
   }
   catch (err) {
     spinner.fail('Invalid username or password');
     exit(1);
   }
-  await page.waitForTimeout(2000);
-  await page.click('button[data-test-subj="confirm"]');
-  await page.waitForTimeout(25000);
+  if (multitenancy === true) {
+    await page.waitForTimeout(2000);
+    await page.click('button[data-test-subj="confirm"]');
+    await page.waitForTimeout(25000);
+  }
   await overridePage.goto(url, { waitUntil: 'networkidle0' });
   await overridePage.waitForTimeout(5000);
 
-  // Check if tenant was selected successfully.
-  if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
-    spinner.fail('Invalid tenant');
-    exit(1);
+  if (multitenancy === true) {
+    // Check if tenant was selected successfully.
+    if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
+      spinner.fail('Invalid tenant');
+      exit(1);
+    }
   }
   await page.goto(url, { waitUntil: 'networkidle0' });
   await page.reload({ waitUntil: 'networkidle0' });
