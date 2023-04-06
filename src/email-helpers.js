@@ -69,6 +69,7 @@ module.exports = async function sendEmail(filename, url, sender, recipient, tran
 }
 
 const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, selfsignedcerts, transporter) => {
+  var rejectSelfSignedCerts = selfsignedcerts === 'true' ? false : true;
   if (transport === 'ses') {
     transporter = nodemailer.createTransport({
       SES: ses
@@ -83,7 +84,7 @@ const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername,
         pass: smtppassword,
       },
       tls: {
-        rejectUnauthorized: selfsignedcerts,
+        rejectUnauthorized: rejectSelfSignedCerts,
       },
     });
   }
