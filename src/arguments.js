@@ -8,7 +8,7 @@ const { program, Option } = require('commander');
 const { exit } = require('process');
 const fs = require('fs');
 const ora = require('ora');
-const { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE, DEFAULT_MULTI_TENANCY } = require('./constants.js');
+const { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE, DEFAULT_MULTI_TENANCY, DEFAULT_SELF_SIGNED_CERTIFICATES } = require('./constants.js');
 const dotenv = require("dotenv");
 dotenv.config();
 const spinner = ora('');
@@ -30,8 +30,8 @@ async function getCommandArguments() {
         .addOption(new Option('-t, --tenant <tenant>', 'tenants in opensearch dashboards')
             .default(DEFAULT_TENANT))
         .addOption(new Option('--multitenancy <flag>', 'enable or disable multi-tenancy')
-                .default(DEFAULT_MULTI_TENANCY)
-                .choices(['true', 'false']))
+            .default(DEFAULT_MULTI_TENANCY)
+            .choices(['true', 'false']))
         .addOption(new Option('-f, --format <type>', 'file format for the report')
             .default(DEFAULT_FORMAT)
             .choices([FORMAT.PDF, FORMAT.PNG, FORMAT.CSV]))
@@ -65,6 +65,9 @@ async function getCommandArguments() {
         .addOption(new Option('--note <note>', 'email body (string or path to text file)')
             .default(DEFAULT_EMAIL_NOTE)
             .env(ENV_VAR.EMAIL_NOTE))
+        .addOption(new Option('--selfsignedcerts <flag>', 'enable or disable self-signed certicates for smtp transport')
+            .default(DEFAULT_SELF_SIGNED_CERTIFICATES)
+            .choices(['true', 'false']));
 
     program.addHelpText('after', `
 Note: The tenant in the url has the higher priority than tenant value provided as command option.`);
@@ -94,6 +97,8 @@ async function getEventArguments(event) {
         event['note'] = DEFAULT_EMAIL_NOTE;
     if (event.multitenancy === undefined)
         event['multitenancy'] = DEFAULT_MULTI_TENANCY;
+    if (event.selfsignedcerts === undefined)
+        event['selfsignedcerts'] = DEFAULT_SELF_SIGNED_CERTIFICATES;
 
     return getOptions(event);
 }
@@ -121,7 +126,8 @@ function getOptions(options) {
         subject: null,
         time: null,
         note: null,
-        emailbody: null
+        emailbody: null,
+        selfsignedcerts: null
     }
 
     // Set url.
@@ -212,6 +218,9 @@ function getOptions(options) {
         commandOptions.note = fs.readFileSync(commandOptions.note, "utf8");
     }
     commandOptions.note = getHtml(commandOptions.note);
+
+    // Set self signed certificate flag.
+    commandOptions.selfsignedcerts = options.selfsignedcerts;
 
     spinner.succeed('Fetched argument values');
     return commandOptions;

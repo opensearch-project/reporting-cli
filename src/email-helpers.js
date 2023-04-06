@@ -20,7 +20,7 @@ try {
   // Do not set AWS_SDK_LOAD_CONFIG if aws config file is missing.
 }
 
-module.exports = async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note, emailbody) {
+module.exports = async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note, emailbody, selfsignedcerts) {
   if (transport !== undefined && (transport === 'smtp' || ses !== undefined) && sender !== undefined && recipient !== undefined) {
     spinner.start('Sending email...');
   } else {
@@ -41,7 +41,7 @@ module.exports = async function sendEmail(filename, url, sender, recipient, tran
 
   let mailOptions = getmailOptions(url, sender, recipient, filename, subject, note, emailbody);
 
-  let transporter = getTransporter(transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword);
+  let transporter = getTransporter(transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, selfsignedcerts);
 
   transporter.use("compile", hbs({
     viewEngine: {
@@ -54,21 +54,21 @@ module.exports = async function sendEmail(filename, url, sender, recipient, tran
 
   // send email
   return new Promise((success, fail) => {
-      transporter.sendMail(mailOptions, function (err, info) {
-        if (err) {
-          spinner.fail('Error sending email' + err);
-          fail(err);
-          exit(1);
-        } else {
-          spinner.succeed('Email sent successfully');
-          deleteTemporaryImage(emailbody);
-          success(info);
-        }
-      });
+    transporter.sendMail(mailOptions, function (err, info) {
+      if (err) {
+        spinner.fail('Error sending email' + err);
+        fail(err);
+        exit(1);
+      } else {
+        spinner.succeed('Email sent successfully');
+        deleteTemporaryImage(emailbody);
+        success(info);
+      }
     });
+  });
 }
 
-const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, transporter) => {
+const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, selfsignedcerts, transporter) => {
   if (transport === 'ses') {
     transporter = nodemailer.createTransport({
       SES: ses
@@ -81,7 +81,10 @@ const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername,
       auth: {
         user: smtpusername,
         pass: smtppassword,
-      }
+      },
+      tls: {
+        rejectUnauthorized: selfsignedcerts,
+      },
     });
   }
   return transporter;
