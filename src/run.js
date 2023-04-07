@@ -43,6 +43,7 @@ module.exports = async function run(args) {
         options.smtppassword,
         options.subject,
         options.note,
-        options.emailbody
+        options.emailbody,
+        options.selfsignedcerts
     );
 }

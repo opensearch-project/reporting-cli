@@ -28,6 +28,7 @@ Option | Default Value | Valid Options |  Environment Variable | Description
 -n, --filename | opensearch-report-timestamp | - | OPENSEARCH_FILENAME | file name of the report
 -a, --auth | none | basic, saml, cognito | - | authentication type for the report
 -t, --tenant | private | - | - | tenants in opensearch dashboards
+--multitenancy | true | true, false | - | enable or disable multi-tenancy
 -c, --credentials | - | - | OPENSEARCH_USERNAME and OPENSEARCH_PASSWORD | login credentials in the format of username:password for connecting to url
 -s, --from | - | - | OPENSEARCH_FROM | email address of the sender
 -r, --to | - | - | OPENSEARCH_TO | email address of the recipient
@@ -39,6 +40,7 @@ Option | Default Value | Valid Options |  Environment Variable | Description
 --smtpsecure | - | - | OPENSEARCH_SMTP_SECURE | if true the connection will use TLS when connecting to server.
 --subject | This is an email containing your dashboard report | - | OPENSEARCH_SUBJECT | subject for the email
 --note | Hi,\nHere is the latest report! | string or path to text file | OPENSEARCH_EMAIL_NOTE | The email body
+--selfsignedcerts | false | true, false | - | enable or disable self-signed certicates for smtp transport
 | - | - | - | CHROMIUM_PATH | path to chromium directory
 
 You can also find this information using help command.
