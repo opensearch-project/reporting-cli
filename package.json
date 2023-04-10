@@ -41,6 +41,9 @@
   "devDependencies": {
     "jest": "^29.3.1"
   },
+  "resolutions": {
+    "xml2js": "^0.5.0"
+  },
   "engines": {
     "node": ">=12",
     "yarn": "^1.21.1"
