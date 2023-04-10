@@ -89,11 +89,11 @@ async function getEventArguments(event) {
         event['width'] = DEFAULT_WIDTH;
     if (event.height === undefined)
         event['height'] = DEFAULT_MIN_HEIGHT;
-    if (event.filename === undefined)
+    if (event.filename === undefined && process.env[ENV_VAR.FILENAME] === undefined)
         event['filename'] = DEFAULT_FILENAME;
-    if (event.subject === undefined)
+    if (event.subject === undefined && process.env[ENV_VAR.EMAIL_SUBJECT] === undefined)
         event['subject'] = DEFAULT_EMAIL_SUBJECT;
-    if (event.note === undefined)
+    if (event.note === undefined && process.env[ENV_VAR.EMAIL_NOTE] === undefined)
         event['note'] = DEFAULT_EMAIL_NOTE;
     if (event.multitenancy === undefined)
         event['multitenancy'] = DEFAULT_MULTI_TENANCY;
