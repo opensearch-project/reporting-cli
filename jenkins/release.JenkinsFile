@@ -4,6 +4,7 @@ lib = library(identifier: 'jenkins@1.6.0', retriever: modernSCM([
 ]))
 
 standardReleasePipelineWithGenericTrigger(
+    overrideDockerImage: 'opensearchstaging/ci-runner:release-centos7-clients-v4',
     tokenIdCredential: 'jenkins-reporting-cli-generic-webhook-token',
     causeString: 'A tag was cut on opensearch-project/reporting-cli repository causing this workflow to run',
     downloadReleaseAsset: true,
