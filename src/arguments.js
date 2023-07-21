@@ -67,6 +67,9 @@ async function getCommandArguments() {
             .env(ENV_VAR.EMAIL_NOTE))
         .addOption(new Option('--selfsignedcerts <flag>', 'enable or disable self-signed certicates for smtp transport')
             .default(DEFAULT_SELF_SIGNED_CERTIFICATES)
+            .choices(['true', 'false']))
+            .addOption(new Option('-b, --branding <flag>', 'removing OpenSearch branding from emails')
+            .default(DEFAULT_BRANDING)
             .choices(['true', 'false']));
 
     program.addHelpText('after', `
@@ -99,6 +102,8 @@ async function getEventArguments(event) {
         event['multitenancy'] = DEFAULT_MULTI_TENANCY;
     if (event.selfsignedcerts === undefined)
         event['selfsignedcerts'] = DEFAULT_SELF_SIGNED_CERTIFICATES;
+    if (event.branding === undefined)
+        event['branding'] = DEFAULT_BRANDING;
 
     return getOptions(event);
 }
@@ -127,7 +132,8 @@ function getOptions(options) {
         time: null,
         note: null,
         emailbody: null,
-        selfsignedcerts: null
+        selfsignedcerts: null,
+        branding: null
     }
 
     // Set url.
@@ -172,6 +178,9 @@ function getOptions(options) {
 
     // Set tenant
     commandOptions.tenant = options.tenant;
+
+    //Set the branding logo
+    commandOptions.branding = options.branding
 
     // Set multitenancy
     commandOptions.multitenancy = options.multitenancy;

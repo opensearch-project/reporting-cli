@@ -44,6 +44,7 @@ module.exports = async function run(args) {
         options.subject,
         options.note,
         options.emailbody,
-        options.selfsignedcerts
+        options.selfsignedcerts,
+        options.branding
     );
 }

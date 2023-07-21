@@ -12,6 +12,7 @@ const { exit } = require('process');
 const ora = require('ora');
 const spinner = ora('');
 let ses;
+let flag;
 
 try {
   process.env.AWS_SDK_LOAD_CONFIG = true;
@@ -20,7 +21,7 @@ try {
   // Do not set AWS_SDK_LOAD_CONFIG if aws config file is missing.
 }
 
-module.exports = async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note, emailbody, selfsignedcerts) {
+module.exports = async function sendEmail(filename, url, sender, recipient, transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, subject, note, emailbody, selfsignedcerts, branding) {
   if (transport !== undefined && (transport === 'smtp' || ses !== undefined) && sender !== undefined && recipient !== undefined) {
     spinner.start('Sending email...');
   } else {
@@ -38,6 +39,8 @@ module.exports = async function sendEmail(filename, url, sender, recipient, tran
     deleteTemporaryImage(emailbody);
     return;
   }
+
+  flag = branding;
 
   let mailOptions = getmailOptions(url, sender, recipient, filename, subject, note, emailbody);
 
@@ -91,34 +94,60 @@ const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername,
   return transporter;
 }
 
-const getmailOptions = (url, sender, recipient, file, emailSubject, note, emailbody, mailOptions = {}) => {
-  mailOptions = {
-    from: sender,
-    subject: emailSubject,
-    to: recipient,
-    attachments: [
-      {
-        filename: emailbody,
-        path: emailbody,
-        cid: 'email_body'
-      },
-      {
-        filename: 'opensearch_logo_darkmode.png',
-        path: path.join(__dirname, './views/opensearch_logo_darkmode.png'),
-        cid: 'opensearch_logo_darkmode'
-      },
-      {
-        filename: file,
-        path: file
-      }],
-    template: 'index',
-    context: {
-      REPORT_TITLE: file,
-      DASHBOARD_URL: url,
-      NOTE: note
+const getmailOptions = (url, sender, recipient, file, emailSubject, note, emailbody, mailOptions, branding = {}) => {
+  if(flag == true){
+    mailOptions = {
+      from: sender,
+      subject: emailSubject,
+      to: recipient,
+      attachments: [
+        {
+          filename: emailbody,
+          path: emailbody,
+          cid: 'email_body'
+        },
+        {
+          filename: 'opensearch_logo_darkmode.png',
+          path: path.join(__dirname, './views/opensearch_logo_darkmode.png'),
+          cid: 'opensearch_logo_darkmode'
+        },
+        {
+          filename: file.includes('tmp')? file.substring(3,file.length()) : file,
+          path: file
+        }],
+      template: 'index',
+      context: {
+        REPORT_TITLE: file,
+        DASHBOARD_URL: url,
+        NOTE: note
+      }
+    };
+    return mailOptions;
+  }
+  else{
+    mailOptions = {
+      from: sender,
+      subject: emailSubject,
+      to: recipient,
+      attachments: [
+        {
+          filename: emailbody,
+          path: emailbody,
+          cid: 'email_body'
+        },
+        {
+          filename: file.includes('tmp')? file.substring(3,file.length) : file,
+          path: file
+        }],
+      template: 'index-no-logo',
+      context: {
+        REPORT_TITLE: file,
+        DASHBOARD_URL: url,
+        NOTE: note
+      }
     }
-  };
-  return mailOptions;
+    return mailOptions;
+  }
 }
 
 // Delete temporary image created for email body
