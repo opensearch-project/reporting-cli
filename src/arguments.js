@@ -8,7 +8,7 @@ const { program, Option } = require('commander');
 const { exit } = require('process');
 const fs = require('fs');
 const ora = require('ora');
-const { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE, DEFAULT_MULTI_TENANCY, DEFAULT_SELF_SIGNED_CERTIFICATES } = require('./constants.js');
+const { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE, DEFAULT_MULTI_TENANCY, DEFAULT_SELF_SIGNED_CERTIFICATES, DEFAULT_BRANDING } = require('./constants.js');
 const dotenv = require("dotenv");
 dotenv.config();
 const spinner = ora('');
@@ -68,7 +68,7 @@ async function getCommandArguments() {
         .addOption(new Option('--selfsignedcerts <flag>', 'enable or disable self-signed certicates for smtp transport')
             .default(DEFAULT_SELF_SIGNED_CERTIFICATES)
             .choices(['true', 'false']))
-            .addOption(new Option('-b, --branding <flag>', 'removing OpenSearch branding from emails')
+        .addOption(new Option('-b, --branding <flag>', 'removing OpenSearch branding from emails')
             .default(DEFAULT_BRANDING)
             .choices(['true', 'false']));
 

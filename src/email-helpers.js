@@ -12,7 +12,6 @@ const { exit } = require('process');
 const ora = require('ora');
 const spinner = ora('');
 let ses;
-let flag;
 
 try {
   process.env.AWS_SDK_LOAD_CONFIG = true;
@@ -40,9 +39,7 @@ module.exports = async function sendEmail(filename, url, sender, recipient, tran
     return;
   }
 
-  flag = branding;
-
-  let mailOptions = getmailOptions(url, sender, recipient, filename, subject, note, emailbody);
+  let mailOptions = getmailOptions(url, sender, recipient, filename, subject, note, emailbody, branding);
 
   let transporter = getTransporter(transport, smtphost, smtpport, smtpsecure, smtpusername, smtppassword, selfsignedcerts);
 
@@ -94,8 +91,8 @@ const getTransporter = (transport, smtphost, smtpport, smtpsecure, smtpusername,
   return transporter;
 }
 
-const getmailOptions = (url, sender, recipient, file, emailSubject, note, emailbody, mailOptions, branding = {}) => {
-  if(flag == true){
+const getmailOptions = (url, sender, recipient, file, emailSubject, note, emailbody, branding, mailOptions  = {}) => {
+  if(branding == true){
     mailOptions = {
       from: sender,
       subject: emailSubject,
