@@ -47,7 +47,7 @@ const URL_SOURCE = {
   DASHBOARDS: "/app/dashboards#",
   VISUALIZE: "/app/visualize#",
   DISCOVER: "/app/discover#",
-  NEW_DISCOVER: "/app/data-explorer/discover#",
+  NEW_DISCOVER: "/app/data-explorer/discover",
   NOTEBOOKS: "notebooks",
 }
 
