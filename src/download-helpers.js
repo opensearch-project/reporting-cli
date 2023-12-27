@@ -216,7 +216,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
       } else {
         await page.click('label[for="custom"]');
         await page.click('button[data-test-subj="comboBoxToggleListButton"]');
-        await page.type('input[data-test-subj="comboBoxSearchInput"]', tenant);
+        await page.type('input[data-test-subj="comboBoxInput"]', tenant);
       }
     } else {
       if ((await page.$('button[type=submit]')) !== null)
