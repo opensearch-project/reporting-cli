@@ -37,7 +37,7 @@ describe('report format option', () => {
     }, 30000);
 
     test('download csv report', async () => {
-        let result = await cli(['-u', `${url}/app/discover#/view/3ba638e0-b894-11e8-a6d9-e546fe2bba5f`, '-a', 'basic', '-c', credentials,
+        let result = await cli(['-u', `${url}/app/data-explorer/discover/#/view/3ba638e0-b894-11e8-a6d9-e546fe2bba5f`, '-a', 'basic', '-c', credentials,
             '-n', 'testdownloadcsv', '-f', 'csv'], '.');
         expect(result.code).toBe(0);
         const expectedFile = './testdownloadcsv.csv';

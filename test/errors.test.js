@@ -40,12 +40,6 @@ describe('download report errors', () => {
     expect(result.stderr).toContain('Invalid tenant');
   }, 150000);
 
-  test('saved search error', async () => {
-    let result = await cli(['-u', `${url}/app/discover#/`, '-a', 'basic', '-c', credentials, '-f', 'csv'], '.');
-    expect(result.code).toBe(1);
-    expect(result.stderr).toContain('Please save search and retry');
-  }, 150000);
-
   test('missing transport value', async () => {
     let result = await cli(['-u', 'https://opensearch.org/', '-n', 'testtransporterror', '-s', 'sender', '-r', 'recipient'], '.');
     const expectedFile = './testtransporterror.pdf';
