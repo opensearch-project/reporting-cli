@@ -36,9 +36,9 @@ module.exports = async function downloadReport(url, format, width, height, filen
     const page = await browser.newPage();
     const overridePage = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
-    page.setDefaultTimeout(300000);
+    page.setDefaultTimeout(3000);
     overridePage.setDefaultNavigationTimeout(0);
-    overridePage.setDefaultTimeout(300000);
+    overridePage.setDefaultTimeout(3000);
 
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
@@ -203,6 +203,7 @@ const getUrl = async (url) => {
 };
 
 const basicAuthentication = async (page, overridePage, url, username, password, tenant, multitenancy) => {
+  console.log("blhaohborhobharobh")
   await page.goto(url, { waitUntil: 'networkidle0' });
   await new Promise(resolve => setTimeout(resolve, 10000));
   await page.type('input[data-test-subj="user-name"]', username);
@@ -216,7 +217,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
       } else {
         await page.click('label[for="custom"]');
         await page.click('button[data-test-subj="comboBoxToggleListButton"]');
-        await page.type('input[data-test-subj="comboBoxInput"]', tenant);
+        await page.type('input[data-test-subj="comboBoxSearchInput"]', tenant);
       }
     } else {
       if ((await page.$('button[type=submit]')) !== null)
@@ -224,6 +225,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
     }
   }
   catch (err) {
+    console.error(err)
     spinner.fail('Invalid username or password');
     exit(1);
   }
@@ -320,7 +322,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
 
   if (multitenancy === true) {
     // Check if tenant was selected successfully.
-    if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
+    if ((await page.$('button[data-test-subj="confirm"]')) !== null) {
       spinner.fail('Invalid tenant');
       exit(1);
     }
