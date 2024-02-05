@@ -206,8 +206,8 @@ function getOptions(options) {
     commandOptions.smtphost = options.smtphost || process.env[ENV_VAR.SMTP_HOST];
     commandOptions.smtpport = options.smtpport || process.env[ENV_VAR.SMTP_PORT];
     commandOptions.smtpsecure = options.smtpsecure || process.env[ENV_VAR.SMTP_SECURE];
-    commandOptions.smtpusername = options.smtpusername || process.env[ENV_VAR.USERNAME];
-    commandOptions.smtppassword = options.smtppassword || process.env[ENV_VAR.PASSWORD];
+    commandOptions.smtpusername = options.smtpusername || process.env[ENV_VAR.SMTP_USERNAME];
+    commandOptions.smtppassword = options.smtppassword || process.env[ENV_VAR.SMTP_PASSWORD];
 
     // Set email subject.
     commandOptions.subject = options.subject || process.env[ENV_VAR.EMAIL_SUBJECT];
