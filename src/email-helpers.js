@@ -108,7 +108,7 @@ const getmailOptions = (url, sender, recipient, file, emailSubject, note, emailb
         cid: 'opensearch_logo_darkmode'
       },
       {
-        filename: file,
+        filename: path.basename(file),
         path: file
       }],
     template: 'index',
