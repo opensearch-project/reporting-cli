@@ -30,7 +30,7 @@ jobs:
       - name: Download and run Opensearch and Dashboard
         run: |
           wget https://opensearch.org/samples/docker-compose.yml
-          docker-compose up --detach
+          docker-compose --env-file .github/workflows/.env up --detach
       
       - name: Check Docker containers
         run: docker ps -a
