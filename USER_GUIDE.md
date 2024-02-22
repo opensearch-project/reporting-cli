@@ -64,7 +64,7 @@ NOTE: Values from the command line argument has higher priority than environment
 
 Sample command for downloading a dashboard report with basic authentication in png format
 ```
-opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --format png --auth basic --credentials admin:admin
+opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --format png --auth basic --credentials admin:< Admin password >
 ```
 Report will be downloaded in the current directory.
 
