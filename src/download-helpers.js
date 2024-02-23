@@ -94,7 +94,7 @@ module.exports = async function downloadReport(url, format, width, height, filen
 
     // force wait for any resize to load after the above DOM modification.
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await waitForDynamicContent(page);
+    await waitForDynamicContent(page, timeout);
     let buffer;
     spinner.text = `Downloading Report...`;
 
@@ -110,7 +110,6 @@ module.exports = async function downloadReport(url, format, width, height, filen
         height: scrollHeight + 'px',
         printBackground: true,
         pageRanges: '1',
-        timeout: 0
       });
     } else if (format === FORMAT.PNG) {
       buffer = await page.screenshot({
