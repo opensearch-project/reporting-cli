@@ -40,6 +40,8 @@ module.exports = async function downloadReport(url, format, width, height, filen
     overridePage.setDefaultNavigationTimeout(0);
     overridePage.setDefaultTimeout(300000);
 
+    spinner.info('authType: '+authType);
+
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
       if (authType === AUTH.BASIC) {
