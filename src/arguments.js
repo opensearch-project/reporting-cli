@@ -68,7 +68,7 @@ async function getCommandArguments() {
         .addOption(new Option('--selfsignedcerts <flag>', 'enable or disable self-signed certicates for smtp transport')
             .default(DEFAULT_SELF_SIGNED_CERTIFICATES)
             .choices(['true', 'false']))
-        .addOption(new Option('--timeout <timeout>', 'timeout for generating report')
+        .addOption(new Option('--timeout <timeout>', 'timeout for generating report in ms')
             .default(DEFAULT_TIMEOUT)
             .env(ENV_VAR.TIMEOUT));
 
