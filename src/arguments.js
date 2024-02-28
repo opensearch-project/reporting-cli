@@ -8,7 +8,7 @@ const { program, Option } = require('commander');
 const { exit } = require('process');
 const fs = require('fs');
 const ora = require('ora');
-const { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE, DEFAULT_MULTI_TENANCY, DEFAULT_SELF_SIGNED_CERTIFICATES } = require('./constants.js');
+const { AUTH, CLI_COMMAND_NAME, DEFAULT_AUTH, DEFAULT_FILENAME, DEFAULT_FORMAT, DEFAULT_MIN_HEIGHT, DEFAULT_TENANT, DEFAULT_WIDTH, ENV_VAR, FORMAT, TRANSPORT_TYPE, DEFAULT_EMAIL_SUBJECT, DEFAULT_EMAIL_NOTE, DEFAULT_MULTI_TENANCY, DEFAULT_SELF_SIGNED_CERTIFICATES, DEFAULT_TIMEOUT } = require('./constants.js');
 const dotenv = require("dotenv");
 dotenv.config();
 const spinner = ora('');
@@ -67,7 +67,10 @@ async function getCommandArguments() {
             .env(ENV_VAR.EMAIL_NOTE))
         .addOption(new Option('--selfsignedcerts <flag>', 'enable or disable self-signed certicates for smtp transport')
             .default(DEFAULT_SELF_SIGNED_CERTIFICATES)
-            .choices(['true', 'false']));
+            .choices(['true', 'false']))
+        .addOption(new Option('--timeout <timeout>', 'timeout for generating report in ms')
+            .default(DEFAULT_TIMEOUT)
+            .env(ENV_VAR.TIMEOUT));
 
     program.addHelpText('after', `
 Note: The tenant in the url has the higher priority than tenant value provided as command option.`);
@@ -99,6 +102,8 @@ async function getEventArguments(event) {
         event['multitenancy'] = DEFAULT_MULTI_TENANCY;
     if (event.selfsignedcerts === undefined)
         event['selfsignedcerts'] = DEFAULT_SELF_SIGNED_CERTIFICATES;
+    if (event.timeout === undefined)
+        event['timeout'] = DEFAULT_TIMEOUT;
 
     return getOptions(event);
 }
@@ -127,7 +132,8 @@ function getOptions(options) {
         time: null,
         note: null,
         emailbody: null,
-        selfsignedcerts: null
+        selfsignedcerts: null,
+        timeout: null
     }
 
     // Set url.
@@ -221,6 +227,9 @@ function getOptions(options) {
 
     // Set self signed certificate flag.
     commandOptions.selfsignedcerts = options.selfsignedcerts;
+
+    // Set timeout.
+    commandOptions.timeout = options.timeout;
 
     spinner.succeed('Fetched argument values');
     return commandOptions;
