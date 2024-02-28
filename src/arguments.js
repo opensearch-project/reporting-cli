@@ -100,10 +100,6 @@ async function getEventArguments(event) {
     if (event.selfsignedcerts === undefined)
         event['selfsignedcerts'] = DEFAULT_SELF_SIGNED_CERTIFICATES;
 
-    spinner.info('Event Argument');
-    spinner.info('auth: '+ event['auth']);
-    spinner.info('multitenancy: '+ event['multitenancy']);
-
     return getOptions(event);
 }
 
@@ -168,10 +164,6 @@ function getOptions(options) {
         spinner.fail('Please specify a valid username or password');
         exit(1);
     }
-    spinner.info('commandOptions');
-    spinner.info('auth: '+ commandOptions.auth);
-    spinner.info('username: '+ commandOptions.username);
-    spinner.info('password: '+ commandOptions.password);
 
     // If auth type is none and credentials are present, give warning auth type might be missing.
     if (commandOptions.auth === DEFAULT_AUTH && commandOptions.username !== undefined && commandOptions.password !== undefined) {

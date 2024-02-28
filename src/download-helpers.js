@@ -40,8 +40,6 @@ module.exports = async function downloadReport(url, format, width, height, filen
     overridePage.setDefaultNavigationTimeout(0);
     overridePage.setDefaultTimeout(300000);
 
-    spinner.info('authType: '+authType);
-
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
       if (authType === AUTH.BASIC) {
@@ -214,10 +212,8 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
   const tenantSelection = await page.$("h4::-p-text(Select your tenant)");
   try {
     if (multitenancy === true && tenantSelection !== null) {
-      console.log('1');
       if (tenant === 'global' || tenant === 'private') {
         await page.click('label[for=' + tenant + ']');
-        console.log('2');
       } else {
         await page.click('label[for="custom"]');
         await page.click('button[data-test-subj="comboBoxToggleListButton"]');
