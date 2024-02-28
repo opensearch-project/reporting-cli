@@ -211,10 +211,13 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
   await page.type('[data-test-subj="password"]', password);
   await page.click('button[type=submit]');
   await page.waitForTimeout(10000);
+  const tenantSelection = await page.$("h4::-p-text(Select your tenant)");
   try {
-    if (multitenancy === true) {
+    if (multitenancy === true && tenantSelection !== null) {
+      console.log('1');
       if (tenant === 'global' || tenant === 'private') {
         await page.click('label[for=' + tenant + ']');
+        console.log('2');
       } else {
         await page.click('label[for="custom"]');
         await page.click('button[data-test-subj="comboBoxToggleListButton"]');
@@ -230,7 +233,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
     exit(1);
   }
 
-  if (multitenancy === true) {
+  if (multitenancy === true && tenantSelection !== null) {
     await page.waitForTimeout(5000);
     await page.click('button[data-test-subj="confirm"]');
     await page.waitForTimeout(25000);
@@ -238,7 +241,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
   await overridePage.goto(url, { waitUntil: 'networkidle0' });
   await overridePage.waitForTimeout(5000);
 
-  if (multitenancy === true) {
+  if (multitenancy === true  && tenantSelection !== null) {
     // Check if tenant was selected successfully.
     if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
       spinner.fail('Invalid tenant');
@@ -260,8 +263,9 @@ const samlAuthentication = async (page, url, username, password, tenant, multite
   await page.type('[name="credentials.passcode"]', password);
   await page.click('[value="Sign in"]')
   await page.waitForTimeout(30000);
+  const tenantSelection = await page.$("h4::-p-text(Select your tenant)");
   try {
-    if (multitenancy === true) {
+    if (multitenancy === true  && tenantSelection !== null) {
       if (tenant === 'global' || tenant === 'private') {
         await page.click('label[for=' + tenant + ']');
       } else {
@@ -278,7 +282,7 @@ const samlAuthentication = async (page, url, username, password, tenant, multite
     spinner.fail('Invalid username or password');
     exit(1);
   }
-  if (multitenancy === true) {
+  if (multitenancy === true  && tenantSelection !== null) {
     await page.waitForTimeout(2000);
     await page.click('button[data-test-subj="confirm"]');
     await page.waitForTimeout(25000);
@@ -294,8 +298,9 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
   await page.type('[name="password"]', password);
   await page.click('[name="signInSubmitButton"]');
   await page.waitForTimeout(30000);
+  const tenantSelection = await page.$("h4::-p-text(Select your tenant)");
   try {
-    if (multitenancy === true) {
+    if (multitenancy === true  && tenantSelection !== null) {
       if (tenant === 'global' || tenant === 'private') {
         await page.click('label[for=' + tenant + ']');
       } else {
@@ -312,7 +317,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
     spinner.fail('Invalid username or password');
     exit(1);
   }
-  if (multitenancy === true) {
+  if (multitenancy === true  && tenantSelection !== null) {
     await page.waitForTimeout(2000);
     await page.click('button[data-test-subj="confirm"]');
     await page.waitForTimeout(25000);
@@ -320,7 +325,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
   await overridePage.goto(url, { waitUntil: 'networkidle0' });
   await overridePage.waitForTimeout(5000);
 
-  if (multitenancy === true) {
+  if (multitenancy === true  && tenantSelection !== null) {
     // Check if tenant was selected successfully.
     if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
       spinner.fail('Invalid tenant');
