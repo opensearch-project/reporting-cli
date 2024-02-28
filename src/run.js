@@ -27,7 +27,8 @@ module.exports = async function run(args) {
         options.multitenancy,
         options.time,
         options.transport,
-        options.emailbody
+        options.emailbody,
+        options.timeout
     );
 
     await sendEmail(

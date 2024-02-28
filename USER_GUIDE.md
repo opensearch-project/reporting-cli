@@ -41,6 +41,7 @@ Option | Default Value | Valid Options |  Environment Variable | Description
 --subject | This is an email containing your dashboard report | - | OPENSEARCH_SUBJECT | subject for the email
 --note | Hi,\nHere is the latest report! | string or path to text file | OPENSEARCH_EMAIL_NOTE | The email body
 --selfsignedcerts | false | true, false | - | enable or disable self-signed certicates for smtp transport
+--timeout | 300000 | - | OPENSEARCH_TIMEOUT | timeout for generating report in ms
 | - | - | - | CHROMIUM_PATH | path to chromium directory
 
 You can also find this information using help command.

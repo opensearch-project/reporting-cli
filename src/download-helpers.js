@@ -10,7 +10,7 @@ const exit = require('process');
 const ora = require('ora');
 const spinner = ora('');
 
-module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, multitenancy, time, transport, emailbody) {
+module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, multitenancy, time, transport, emailbody, timeout) {
   spinner.start('Connecting to url ' + url);
   try {
     const browser = await puppeteer.launch({
@@ -32,13 +32,12 @@ module.exports = async function downloadReport(url, format, width, height, filen
         TZ: process.env.TZ || 'UTC',
       },
     });
-
     const page = await browser.newPage();
     const overridePage = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
-    page.setDefaultTimeout(300000);
+    page.setDefaultTimeout(timeout);
     overridePage.setDefaultNavigationTimeout(0);
-    overridePage.setDefaultTimeout(300000);
+    overridePage.setDefaultTimeout(timeout);
 
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
@@ -95,7 +94,7 @@ module.exports = async function downloadReport(url, format, width, height, filen
 
     // force wait for any resize to load after the above DOM modification.
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await waitForDynamicContent(page);
+    await waitForDynamicContent(page, timeout);
     let buffer;
     spinner.text = `Downloading Report...`;
 
@@ -155,7 +154,7 @@ module.exports = async function downloadReport(url, format, width, height, filen
 
 const waitForDynamicContent = async (
   page,
-  timeout = 30000,
+  timeout = timeout,
   interval = 1000,
   checks = 5
 ) => {
@@ -258,7 +257,7 @@ const samlAuthentication = async (page, url, username, password, tenant, multite
   await page.type('[name="identifier"]', username);
   await page.type('[name="credentials.passcode"]', password);
   await page.click('[value="Sign in"]')
-  await page.waitForTimeout(30000);
+  await page.waitForTimeout(timeout);
   const tenantSelection = await page.$("h4::-p-text(Select your tenant)");
   try {
     if (multitenancy === true  && tenantSelection !== null) {
@@ -293,7 +292,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
   await page.type('[name="username"]', username);
   await page.type('[name="password"]', password);
   await page.click('[name="signInSubmitButton"]');
-  await page.waitForTimeout(30000);
+  await page.waitForTimeout(timeout);
   const tenantSelection = await page.$("h4::-p-text(Select your tenant)");
   try {
     if (multitenancy === true  && tenantSelection !== null) {
