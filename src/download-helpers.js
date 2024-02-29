@@ -208,7 +208,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
   await page.type('[data-test-subj="password"]', password);
   await page.click('button[type=submit]');
   await page.waitForTimeout(10000);
-  const tenantSelection = await page.$("h4::-p-text(Select your tenant)");
+  const tenantSelection = await page.$('Select your tenant');
   try {
     if (multitenancy === true && tenantSelection !== null) {
       if (tenant === 'global' || tenant === 'private') {
@@ -258,7 +258,7 @@ const samlAuthentication = async (page, url, username, password, tenant, multite
   await page.type('[name="credentials.passcode"]', password);
   await page.click('[value="Sign in"]')
   await page.waitForTimeout(timeout);
-  const tenantSelection = await page.$("h4::-p-text(Select your tenant)");
+  const tenantSelection = await page.$('Select your tenant');
   try {
     if (multitenancy === true  && tenantSelection !== null) {
       if (tenant === 'global' || tenant === 'private') {
@@ -293,7 +293,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
   await page.type('[name="password"]', password);
   await page.click('[name="signInSubmitButton"]');
   await page.waitForTimeout(timeout);
-  const tenantSelection = await page.$("h4::-p-text(Select your tenant)");
+  const tenantSelection = await page.$('Select your tenant');
   try {
     if (multitenancy === true  && tenantSelection !== null) {
       if (tenant === 'global' || tenant === 'private') {
