@@ -41,6 +41,7 @@ Option | Default Value | Valid Options |  Environment Variable | Description
 --subject | This is an email containing your dashboard report | - | OPENSEARCH_SUBJECT | subject for the email
 --note | Hi,\nHere is the latest report! | string or path to text file | OPENSEARCH_EMAIL_NOTE | The email body
 --selfsignedcerts | false | true, false | - | enable or disable self-signed certicates for smtp transport
+--timeout | 300000 | - | OPENSEARCH_TIMEOUT | timeout for generating report in ms
 | - | - | - | CHROMIUM_PATH | path to chromium directory
 
 You can also find this information using help command.
@@ -64,7 +65,7 @@ NOTE: Values from the command line argument has higher priority than environment
 
 Sample command for downloading a dashboard report with basic authentication in png format
 ```
-opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --format png --auth basic --credentials admin:admin
+opensearch-reporting-cli --url https://localhost:5601/app/dashboards#/view/7adfa750-4c81-11e8-b3d7-01146121b73d --format png --auth basic --credentials admin:< Admin password >
 ```
 Report will be downloaded in the current directory.
 

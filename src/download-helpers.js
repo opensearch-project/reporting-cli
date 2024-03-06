@@ -10,7 +10,7 @@ const exit = require('process');
 const ora = require('ora');
 const spinner = ora('');
 
-module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, multitenancy, time, transport, emailbody) {
+module.exports = async function downloadReport(url, format, width, height, filename, authType, username, password, tenant, multitenancy, time, transport, emailbody, timeout) {
   spinner.start('Connecting to url ' + url);
   try {
     const browser = await puppeteer.launch({
@@ -32,13 +32,12 @@ module.exports = async function downloadReport(url, format, width, height, filen
         TZ: process.env.TZ || 'UTC',
       },
     });
-
     const page = await browser.newPage();
     const overridePage = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
-    page.setDefaultTimeout(3000);
+    page.setDefaultTimeout(timeout);
     overridePage.setDefaultNavigationTimeout(0);
-    overridePage.setDefaultTimeout(3000);
+    overridePage.setDefaultTimeout(timeout);
 
     // auth 
     if (authType !== undefined && authType !== AUTH.NONE && username !== undefined && password !== undefined) {
@@ -95,7 +94,7 @@ module.exports = async function downloadReport(url, format, width, height, filen
 
     // force wait for any resize to load after the above DOM modification.
     await new Promise(resolve => setTimeout(resolve, 2000));
-    await waitForDynamicContent(page);
+    await waitForDynamicContent(page, timeout);
     let buffer;
     spinner.text = `Downloading Report...`;
 
@@ -155,7 +154,7 @@ module.exports = async function downloadReport(url, format, width, height, filen
 
 const waitForDynamicContent = async (
   page,
-  timeout = 30000,
+  timeout = timeout,
   interval = 1000,
   checks = 5
 ) => {
@@ -210,8 +209,9 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
   await page.type('[data-test-subj="password"]', password);
   await page.click('button[type=submit]');
   await page.waitForTimeout(10000);
+  const tenantSelection = await page.$('Select your tenant');
   try {
-    if (multitenancy === true) {
+    if (multitenancy === true && tenantSelection !== null) {
       if (tenant === 'global' || tenant === 'private') {
         await page.click('label[for=' + tenant + ']');
       } else {
@@ -230,7 +230,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
     exit(1);
   }
 
-  if (multitenancy === true) {
+  if (multitenancy === true && tenantSelection !== null) {
     await page.waitForTimeout(5000);
     await page.click('button[data-test-subj="confirm"]');
     await page.waitForTimeout(25000);
@@ -238,7 +238,7 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
   await overridePage.goto(url, { waitUntil: 'networkidle0' });
   await overridePage.waitForTimeout(5000);
 
-  if (multitenancy === true) {
+  if (multitenancy === true  && tenantSelection !== null) {
     // Check if tenant was selected successfully.
     if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
       spinner.fail('Invalid tenant');
@@ -259,9 +259,10 @@ const samlAuthentication = async (page, url, username, password, tenant, multite
   await page.type('[name="identifier"]', username);
   await page.type('[name="credentials.passcode"]', password);
   await page.click('[value="Sign in"]')
-  await page.waitForTimeout(30000);
+  await page.waitForTimeout(timeout);
+  const tenantSelection = await page.$('Select your tenant');
   try {
-    if (multitenancy === true) {
+    if (multitenancy === true  && tenantSelection !== null) {
       if (tenant === 'global' || tenant === 'private') {
         await page.click('label[for=' + tenant + ']');
       } else {
@@ -278,7 +279,7 @@ const samlAuthentication = async (page, url, username, password, tenant, multite
     spinner.fail('Invalid username or password');
     exit(1);
   }
-  if (multitenancy === true) {
+  if (multitenancy === true  && tenantSelection !== null) {
     await page.waitForTimeout(2000);
     await page.click('button[data-test-subj="confirm"]');
     await page.waitForTimeout(25000);
@@ -293,9 +294,10 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
   await page.type('[name="username"]', username);
   await page.type('[name="password"]', password);
   await page.click('[name="signInSubmitButton"]');
-  await page.waitForTimeout(30000);
+  await page.waitForTimeout(timeout);
+  const tenantSelection = await page.$('Select your tenant');
   try {
-    if (multitenancy === true) {
+    if (multitenancy === true  && tenantSelection !== null) {
       if (tenant === 'global' || tenant === 'private') {
         await page.click('label[for=' + tenant + ']');
       } else {
@@ -312,7 +314,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
     spinner.fail('Invalid username or password');
     exit(1);
   }
-  if (multitenancy === true) {
+  if (multitenancy === true  && tenantSelection !== null) {
     await page.waitForTimeout(2000);
     await page.click('button[data-test-subj="confirm"]');
     await page.waitForTimeout(25000);
@@ -320,7 +322,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
   await overridePage.goto(url, { waitUntil: 'networkidle0' });
   await overridePage.waitForTimeout(5000);
 
-  if (multitenancy === true) {
+  if (multitenancy === true  && tenantSelection !== null) {
     // Check if tenant was selected successfully.
     if ((await page.$('button[data-test-subj="confirm"]')) !== null) {
       spinner.fail('Invalid tenant');

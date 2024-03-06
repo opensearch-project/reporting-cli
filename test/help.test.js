@@ -34,6 +34,7 @@ Options:
   --subject <subject>                    email subject (default: "This is an email containing your opensearch dashboard report", env: OPENSEARCH_EMAIL_SUBJECT)
   --note <note>                          email body (string or path to text file) (default: "Hi,\\nHere is the latest report!", env: OPENSEARCH_EMAIL_NOTE)
   --selfsignedcerts <flag>               enable or disable self-signed certicates for smtp transport (choices: "true", "false", default: false)
+  --timeout <timeout>                    timeout for generating report in ms (default: 300000, env: OPENSEARCH_TIMEOUT)
   -h, --help                             display help for command
 
 Note: The tenant in the url has the higher priority than tenant value provided as command option.
