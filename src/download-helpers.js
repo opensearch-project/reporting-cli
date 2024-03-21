@@ -257,7 +257,7 @@ const samlAuthentication = async (page, url, username, password, tenant, multite
   await page.type('[name="identifier"]', username);
   await page.type('[name="credentials.passcode"]', password);
   await page.click('[value="Sign in"]')
-  await page.waitForTimeout(timeout);
+  await page.waitForTimeout(30000);
   const tenantSelection = await page.$('Select your tenant');
   try {
     if (multitenancy === true  && tenantSelection !== null) {
@@ -292,7 +292,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
   await page.type('[name="username"]', username);
   await page.type('[name="password"]', password);
   await page.click('[name="signInSubmitButton"]');
-  await page.waitForTimeout(timeout);
+  await page.waitForTimeout(30000);
   const tenantSelection = await page.$('Select your tenant');
   try {
     if (multitenancy === true  && tenantSelection !== null) {
