@@ -186,7 +186,7 @@ const getReportSourceFromURL = (url) => {
   else if (url.includes(URL_SOURCE.VISUALIZE)) {
     return REPORT_TYPE.VISUALIZATION;
   }
-  else if (url.includes(URL_SOURCE.DISCOVER)) {
+  else if (url.includes(URL_SOURCE.DISCOVER) || url.includes(URL_SOURCE.NEW_DISCOVER)) {
     return REPORT_TYPE.DISCOVER;
   }
   else if (url.includes(URL_SOURCE.NOTEBOOKS)) {
