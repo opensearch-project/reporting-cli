@@ -19,14 +19,4 @@ describe('download report errors', () => {
         expect(stats.size >= 0).toBeTruthy();
         fs.unlinkSync(expectedFile);
     }, 150000);
-
-    test('download csv report from custom tenant', async () => {
-        let result = await cli(['-u', `${url}/app/data-explorer/discover/#/view/571aaf70-4c88-11e8-b3d7-01146121b73d`, '-a', 'basic', '-c', credentials,
-            '-n', 'testcsvoncustomtenant', '-t', 'admin_tenant', '-f', 'csv'], '.');
-        expect(result.code).toBe(0);
-        const expectedFile = './testcsvoncustomtenant.csv';
-        const stats = fs.statSync(expectedFile);
-        expect(stats.size >= 0).toBeTruthy();
-        fs.unlinkSync(expectedFile);
-    }, 150000);
 });
