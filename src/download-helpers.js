@@ -202,7 +202,6 @@ const getUrl = async (url) => {
 };
 
 const basicAuthentication = async (page, overridePage, url, username, password, tenant, multitenancy) => {
-  console.log("blhaohborhobharobh")
   await page.goto(url, { waitUntil: 'networkidle0' });
   await new Promise(resolve => setTimeout(resolve, 10000));
   await page.type('input[data-test-subj="user-name"]', username);
@@ -225,7 +224,6 @@ const basicAuthentication = async (page, overridePage, url, username, password, 
     }
   }
   catch (err) {
-    console.error(err)
     spinner.fail('Invalid username or password');
     exit(1);
   }
@@ -324,7 +322,7 @@ const cognitoAuthentication = async (page, overridePage, url, username, password
 
   if (multitenancy === true  && tenantSelection !== null) {
     // Check if tenant was selected successfully.
-    if ((await page.$('button[data-test-subj="confirm"]')) !== null) {
+    if ((await overridePage.$('button[data-test-subj="confirm"]')) !== null) {
       spinner.fail('Invalid tenant');
       exit(1);
     }
