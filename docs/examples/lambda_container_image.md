@@ -9,7 +9,7 @@ Opensearch reporting CLI can be used with Lambda for scheduling email reports.
 
 ### Creating Lambda container image
 
-1. Create a Dockerfile. Following Dockerfile can be used to create a container image for v1.0.0.
+1. Create a Dockerfile. Following Dockerfile can be used to create a container image for v1.1.0.
   ```dockerfile
   # Define function directory
   ARG FUNCTION_DIR="/function"
