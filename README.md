@@ -24,7 +24,7 @@ npm i @opensearch-project/reporting-cli
 You can also download the `opensearch-reporting-cli` tool from the [OpenSearch.org](https://opensearch.org/downloads.html) and run the following command.
 
 ```bash
-npm install -g opensearch-reporting-cli-1.0.0.tgz
+npm install -g opensearch-reporting-cli-1.1.0.tgz
 ```
 
 ## Examples
