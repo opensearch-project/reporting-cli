@@ -1258,9 +1258,9 @@ domexception@^4.0.0:
     webidl-conversions "^7.0.0"
 
 dompurify@^2.1.1:
-  version "2.4.3"
-  resolved "https://registry.npmjs.org/dompurify/-/dompurify-2.4.3.tgz"
-  integrity sha512-q6QaLcakcRjebxjg8/+NP+h0rPfatOgOzc46Fst9VAA3jF2ApfKBNKMzdP4DYTqtUMXSCd5pRS/8Po/OmoCHZQ==
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.5.4.tgz#347e91070963b22db31c7c8d0ce9a0a2c3c08746"
+  integrity sha512-l5NNozANzaLPPe0XaAwvg3uZcHtDBnziX/HjsY1UcDj1MxTK8Dd0Kv096jyPK5HRzs/XM5IMj20dW8Fk+HnbUA==
 
 dotenv@^16.0.3:
   version "16.0.3"
