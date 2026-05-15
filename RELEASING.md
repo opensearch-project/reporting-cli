@@ -34,7 +34,8 @@ Repositories create consistent release labels, such as `v1.0.0`, `v1.1.0` and `v
 The release process is standard across repositories in this org and is run by a release manager volunteering from amongst [maintainers](MAINTAINERS.md).
 
 1. Create a tag, e.g. 1.0.0, and push it to this GitHub repository.
-1. The [release-drafter.yml](.github/workflows/release-drafter.yml) will be automatically kicked off and a draft release will be created.
-1. This draft release triggers the [jenkins release workflow](https://build.ci.opensearch.org/job/reporting-cli-release/) as a result of which reporting-cli will is released on [npmjs](https://www.npmjs.com/package/@opensearch-project/reporting-cli) and [artifacts.opensearch.org](https://artifacts.opensearch.org/reporting-cli/opensearch-reporting-cli-1.0.0.tgz)
-1. Once the above release workflow is successful, the drafted release on GitHub is published automatically.
+1. The [release-drafter.yml](.github/workflows/release-drafter.yml) will be automatically kicked off and is responsible for publishing the package to NPM and creating a release on GitHub.
+1. The workflow requires approval from reviewers configured in the `release-approval` GitHub environment before it proceeds.
+1. Once approved, the workflow publishes to NPM using trusted publishers (OIDC authentication) and creates a draft GitHub release with auto-generated release notes.
+1. This draft release triggers the [jenkins release workflow](https://build.ci.opensearch.org/job/reporting-cli-release/) as a result of which reporting-cli is released on [artifacts.opensearch.org](https://artifacts.opensearch.org/reporting-cli/opensearch-reporting-cli-1.0.0.tgz)
 1. Increment "version" in [package.json](./package.json) to the next patch release, e.g. 1.0.1.

@@ -1,4 +1,4 @@
-name: Draft Release
+name: Release Workflow
 
 on:
   push:
@@ -6,22 +6,33 @@ on:
       - "*"
 
 jobs:
-  draft_release:
+  release-to-npm:
+    environment: release-approval
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: write
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+
       - name: Build and package
         run: |
           npm pack
           filename=`ls opensearch-project-reporting-cli-*.tgz | sed 's/-project//g'`
           mkdir reporting-cli && mv opensearch-project-reporting-cli-*.tgz reporting-cli/$filename
           tar -cvf artifacts.tar.gz reporting-cli
-      - name: Draft a release
-        uses: softprops/action-gh-release@v1
+
+      - run: npm publish
+
+      - name: Release on Github
+        uses: softprops/action-gh-release@v2
         with:
           draft: true
           generate_release_notes: true
