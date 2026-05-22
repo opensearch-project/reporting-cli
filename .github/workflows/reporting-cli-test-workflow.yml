@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout Reporting CLI
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
 
       - name: Configure sysctl limits
         run: |
@@ -40,7 +40,7 @@ jobs:
         shell: bash
 
       - name: Wait for cluster to start
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@14672906e672a08bd6eeb15720e9ed3ce869cdd4 # v2
         with:
           timeout_seconds: 1
           max_attempts: 30
@@ -67,7 +67,7 @@ jobs:
           mv opensearch-project-reporting-cli-${{ env.CLI_VERSION }}.tgz opensearch-reporting-cli-${{ env.CLI_VERSION }}.tgz
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@3446296876d12d4e3a0f3145a3c87e67bf0a16b5 # v1
         with:
           name: opensearch-reporting-cli-${{ env.CLI_VERSION }}-linux
           path: ./opensearch-reporting-cli-${{ env.CLI_VERSION }}.tgz
