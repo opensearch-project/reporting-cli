@@ -31,7 +31,7 @@
     "jsdom": "^20.0.0",
     "lodash": "^4.17.21",
     "nodemailer": "^6.8.0",
-    "nodemailer-express-handlebars": "^5.0.0",
+    "nodemailer-express-handlebars": "^6.0.0",
     "ora": "^5.4.1",
     "puppeteer": "^18.2.0"
   },
